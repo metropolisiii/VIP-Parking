@@ -1,14 +1,15 @@
 Business Requirements for this Project:
 
-•	An online, user friendly form that can be accessed through our webpage with the following fields:	
-    o	Guest name,
-    o	(possibly guest email address), 
-    o	VIP Category (see current procedure document), 
-    o	date of visit, 
-    o	time of visit (allowing for parking time, etc.), 
-    o	name of requestor, 
-    o	requestor’s email address, and
-    o	sponsoring department.
+•	An online, user friendly form that can be accessed through our webpage with the following fields:
+
+        o	Guest name,
+        o	(possibly guest email address), 
+        o	VIP Category (see current procedure document), 
+        o	date of visit, 
+        o	time of visit (allowing for parking time, etc.), 
+        o	name of requestor, 
+        o	requestor’s email address, and
+        o	sponsoring department.
 
 •	A way to funnel these request to our customer service area for approval (Approved, Declined/Processed) and processing.
 •	A way to assign location where the guest will be parking (location = VIP Lot –or- Any Lot). 
