@@ -15,14 +15,15 @@ Business Requirements for this Project:
 
 •	A way to assign location where the guest will be parking (location = VIP Lot –or- Any Lot). 
 
-•	The system should be able to: 
-    o	Generate a permit,
+•	The system should be able to:
+
+        o	Generate a permit,
 	Name of Guest,
 	date and time of visit,
 	parking location.
-    o	send the permit to requestor (and guest ???),
-    o	provide a gate code specific to the date of visit (we have a spreadsheet with random, codes we generated),
-    o	provide a map to the VIP Lot or link to map at:  http://www.regis.edu/~/media/9B3B59E289BD495FA3D64210BF9774B7.ashx.
+        o	send the permit to requestor (and guest ???),
+        o	provide a gate code specific to the date of visit (we have a spreadsheet with random, codes we generated),
+        o	provide a map to the VIP Lot or link to map at:  http://www.regis.edu/~/media/9B3B59E289BD495FA3D64210BF9774B7.ashx.
 
 •	We also need a way to generate reports by date, VIP category, spaces used, and department.
 
