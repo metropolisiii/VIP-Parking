@@ -1,0 +1,51 @@
+Generating Report.
+
+Actors:  Administrator
+
+Stakeholder and interests:  
+Administrator wants to generate report from the system.
+
+Precondition
+Application is connected to the database.
+Administrator is authenticated by system.
+
+Success Guarantee
+Admin is able to generate specified report in desired format.
+
+Main Success Scenario
+1.	Admin clicks Reporting button.
+2.	Reporting page containing input fields Date, Vip Category, Department is displayed to admin.
+3.	Admin doesn’t provide any input and hits submit. (Alt .1 Missing field).
+4.	Admin doesn’t select date (start date, end date) from calendar. (Alt 2.  Date error)
+5.	Admin selects date (start date and end date) from calendar.
+6.	Admin selects value from vip category or Department or both or none.
+7.	Admin hits submit.
+8.	No data is displayed. (Alt. 3 NO Data Found)
+9.	Required report is generated on screen.
+10.	Admin hits save and selects desired format (pdf. Excel spreadsheet etc).
+
+
+Alt 1. Missing field
+1 if none of the field is specified then system displays error message stating “ At least one field required”.
+2 System directs to step 2 of Main success scenario.
+
+Alt 2. Date Error
+1 Admin gets error message stating both fields for date needs to be filled up.
+2 System directs admin to step 2 of Main success scenario.
+
+
+Alt 3. No Data Found 
+1. If no data is found from the query then system directs admin back to step 2 of main success scenario while presenting error message, “No data found please select different criteria”.
+
+
+Exception
+If application failed to connect database, then logs error and displays “failed to connect database” message.
+
+
+Special Requirements
+Mandatory input field such as date range should contain asterisk on the label so that it can’t be missed easily.
+
+Open issues:
+none
+
+
