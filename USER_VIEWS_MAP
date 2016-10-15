@@ -1,0 +1,28 @@
+Primary Actors: Faculty, Staff
+
+Stakeholders and Interests:
+Faculty:  Wants to know the parking locations of Regis university.
+Staff: Wants to know the parking locations of Regis university.
+
+Preconditions:
+User has successfully logged into the system.
+
+Success Guarantee (post conditions):
+User is presented with a map showing different parking lots available in campus.
+
+Main Success Scenario:
+1.	User clicks on Map link.
+2.	User is presented with map of Regis parking lots.
+
+Exception:
+ If system is unable to display the map, then automatically error log is created and email sent to the administrator.
+ 
+ 
+Open issues
+Is it necessary to be logged in in order to see the map?
+Can we make map interactive so that user can click to required lots in order to view any available parking spots?
+
+
+
+
+
