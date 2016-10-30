@@ -6,7 +6,6 @@
 
 body {
     background-color: #fff;
-    border-top: solid 10px #000;
     color: #333;
     font-size: .85em;
     font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
@@ -105,7 +104,6 @@ h5, h6 {
 }
 
     .main-content {
-        background: url("../Images/accent.png") no-repeat;
         padding-left: 10px;
         padding-top: 30px;
     }
@@ -129,12 +127,27 @@ footer {
 /* site title
 ----------------------------------------------------------*/
 .site-title {
-    color: #c8c8c8;
+    color: #474747;
     font-family: Rockwell, Consolas, "Courier New", Courier, monospace;
     font-size: 2.3em;
     margin: 0;
 }
+.heading {
+    padding: 10px;
+    background: #88bfe8; /* Old browsers */
+    background: -moz-linear-gradient(left, #88bfe8 0%, #70b0e0 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left, #88bfe8 0%,#70b0e0 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right, #88bfe8 0%,#70b0e0 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#88bfe8', endColorstr='#70b0e0',GradientType=1 ); /* IE6-9 */
+}
+.heading_content {
+    margin-left: 10%;
+}
 
+.content-wrapper img {
+    max-height: 100%;
+    max-width: 100%;
+}
 .site-title a, .site-title a:hover, .site-title a:active {
     background: none;
     color: #c8c8c8;
