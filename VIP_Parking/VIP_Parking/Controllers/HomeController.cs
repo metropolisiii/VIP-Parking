@@ -8,25 +8,38 @@ namespace VIP_Parking.Controllers
 {
     public class HomeController : Controller
     {
+        [AllowAnonymous]
         public ActionResult Index()
         {
-            ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
+            ViewBag.Message = "";
 
             return View();
         }
-
-        public ActionResult About()
+        [HttpPost]
+        public ActionResult Index(LoginModel model, string returnUrl)
         {
-            ViewBag.Message = "Your app description page.";
+            if (ModelState.IsValid)
+            {
+                UserManager UM = new UserManager();
+                string password = UM.GetUserPassword(ULV.LoginName);
 
-            return View();
+                if (string.IsNullOrEmpty(password))
+                    ModelState.AddModelError("", "The user login or password provided is incorrect.");
+                else {
+                    if (ULV.Password.Equals(password))
+                    {
+                        FormsAuthentication.SetAuthCookie(ULV.LoginName, false);
+                        return RedirectToAction("Welcome", "Home");
+                    }
+                    else {
+                        ModelState.AddModelError("", "The password provided is incorrect.");
+                    }
+                }
+            }
+
+            // If we got this far, something failed, redisplay form  
+            return View(ULV);
         }
 
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
     }
 }
