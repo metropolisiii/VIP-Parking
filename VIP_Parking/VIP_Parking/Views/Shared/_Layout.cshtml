@@ -11,14 +11,21 @@
     <body>
         <header>
             <div class="heading">
-                <div class="content-wrapper"
+                <div class="content-wrapper" id="logo-container">
                     <div class="site-title">
                         <a href="@Url.Action("Index", "Home")">
                             <img src="~/Images/RU-logo-official_rev.png" alt="logo" />
                         </a>
                         <h1>Regis Parking Reservations</h1>
-                    </div>
+                    </div><!--.site-title-->
                 </div>
+                <div class="user_links">
+                    @if (Request.IsAuthenticated)
+                    {
+                        <span>Welcome, @User.Identity.Name</span>
+                        <span>@Html.ActionLink("Log out", "Logoff", "Login")</span>
+                    }
+                </div><!--.user_links-->
             </div>
         </header>
         <div id="body">
