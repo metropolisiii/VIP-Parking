@@ -38,9 +38,11 @@ namespace ActiveDirectoryAuthentication.Controllers
             if (authenticationResult.IsSuccess)
             {
                 // we are in!
+                //Insert or update Requestor table
+                var user = User.Identity.Name;
+               
                 return RedirectToLocal(returnUrl);
             }
-
             ModelState.AddModelError("", authenticationResult.ErrorMessage);
             return View(model);
         }

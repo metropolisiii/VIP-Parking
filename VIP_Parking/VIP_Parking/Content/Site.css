@@ -139,6 +139,7 @@ footer {
     background: -webkit-linear-gradient(left, #88bfe8 0%,#70b0e0 100%); /* Chrome10-25,Safari5.1-6 */
     background: linear-gradient(to right, #88bfe8 0%,#70b0e0 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#88bfe8', endColorstr='#70b0e0',GradientType=1 ); /* IE6-9 */
+    position: relative;
 }
 .heading_content {
     margin-left: 10%;
@@ -154,7 +155,11 @@ footer {
     outline: none;
     text-decoration: none;
 }
-
+.user_links {
+    position: absolute;
+    right: 10px;
+    top: 0;
+}
 
 /* login
 ----------------------------------------------------------*/
@@ -764,4 +769,9 @@ tr.pager td {
         footer p {
             margin: 0;
         }
+}
+@media only screen and (max-width: 480px) {
+    h1 {
+        font-size: 1.3em;
+    }
 }
