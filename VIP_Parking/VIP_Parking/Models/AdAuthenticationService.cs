@@ -43,7 +43,9 @@ namespace ActiveDirectoryAuthentication.Models
             // authenticates against your Domain AD
             ContextType authenticationType = ContextType.Domain;
 #endif
-            PrincipalContext principalContext = new PrincipalContext(authenticationType);
+            PrincipalContext principalContext = new PrincipalContext(ContextType.Domain, "cablelabs.com","OU=community,DC=cablelabs,DC=com", username, password);
+
+
             bool isAuthenticated = false;
             UserPrincipal userPrincipal = null;
             try
@@ -51,11 +53,12 @@ namespace ActiveDirectoryAuthentication.Models
                 isAuthenticated = principalContext.ValidateCredentials(username, password, ContextOptions.Negotiate);
                 if (isAuthenticated)
                 {
-                    userPrincipal = UserPrincipal.FindByIdentity(principalContext, username);
+                    userPrincipal = UserPrincipal.FindByIdentity(principalContext, IdentityType.SamAccountName, username);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine("Exception information: {0}", e);
                 isAuthenticated = false;
                 userPrincipal = null;
             }
