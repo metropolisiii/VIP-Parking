@@ -10,5 +10,6 @@ namespace MyProject
         {
             ConfigureAuth(app);
         }
+
     }
 }

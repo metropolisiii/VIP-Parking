@@ -13,8 +13,8 @@ namespace VIP_Parking.Controllers
         public ActionResult Index()
         {
             ViewBag.Message = "";
-            Reservation reservation = new Reservation();
-            return View(reservation);
+            
+            return View();
         }
     }
 }
