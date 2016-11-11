@@ -1,9 +1,11 @@
 ﻿using System;
+using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.Security.Claims;
 using Microsoft.Owin.Security;
 using MyProject;
-
+using System.Linq;
+using System.Web;
 
 namespace ActiveDirectoryAuthentication.Models
 {
@@ -28,22 +30,16 @@ namespace ActiveDirectoryAuthentication.Models
         }
 
 
-        /// <summary>
-        /// Check if username and password matches existing account in AD. 
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
         public AuthenticationResult SignIn(String username, String password)
         {
-#if DEBUG
+#if !DEBUG
             // authenticates against your local machine - for development time
             ContextType authenticationType = ContextType.Machine;
 #else
             // authenticates against your Domain AD
             ContextType authenticationType = ContextType.Domain;
 #endif
-            PrincipalContext principalContext = new PrincipalContext(ContextType.Domain, "cablelabs.com","OU=community,DC=cablelabs,DC=com", username, password);
+            PrincipalContext principalContext = new PrincipalContext(authenticationType, "cablelabs.com","OU=community,DC=cablelabs,DC=com", username, password);
 
 
             bool isAuthenticated = false;
@@ -56,9 +52,8 @@ namespace ActiveDirectoryAuthentication.Models
                     userPrincipal = UserPrincipal.FindByIdentity(principalContext, IdentityType.SamAccountName, username);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine("Exception information: {0}", e);
                 isAuthenticated = false;
                 userPrincipal = null;
             }
@@ -81,17 +76,52 @@ namespace ActiveDirectoryAuthentication.Models
                 // revealing this information
                 return new AuthenticationResult("Your account is disabled");
             }
-
+            if (!IsUserGroupMember(principalContext, userPrincipal, username,"cl-employees"))
+            {
+                return new AuthenticationResult("You are not authorized to access this application.");
+            }
             var identity = CreateIdentity(userPrincipal);
 
             authenticationManager.SignOut(MyAuthentication.ApplicationCookie);
             authenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = false }, identity);
 
+            //Store user's information in session variable
+            DirectoryEntry directoryEntry = (userPrincipal.GetUnderlyingObject() as DirectoryEntry);
+            HttpContext sess = HttpContext.Current;
+            sess.Session["username"] = username;
+            sess.Session["firstname"] = userPrincipal.GivenName;
+            sess.Session["lastname"] = userPrincipal.Surname;
+            sess.Session["email"] = userPrincipal.EmailAddress;
+            sess.Session["user_department"] = GetProperty(directoryEntry, "Department");
 
             return new AuthenticationResult();
         }
 
+        public void addUserToDB(UserPrincipal userPrincipal)
+        {
+            
+            //Add or insert department in Departments table
 
+            //Add of insert user in Requester table
+        }
+        public static bool IsUserGroupMember(PrincipalContext context, UserPrincipal user, string userName, string groupName)
+        {
+            using (PrincipalSearchResult<Principal> groups = user.GetAuthorizationGroups())
+            {
+                return groups.OfType<GroupPrincipal>().Any(g => g.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase));
+            }
+        }
+        private string GetProperty(DirectoryEntry directoryEntry, string propertyName)
+        {
+            if (directoryEntry.Properties.Contains(propertyName))
+            {
+                return directoryEntry.Properties[propertyName][0].ToString();
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
         private ClaimsIdentity CreateIdentity(UserPrincipal userPrincipal)
         {
             var identity = new ClaimsIdentity(MyAuthentication.ApplicationCookie, ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);

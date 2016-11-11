@@ -7,16 +7,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace VIP_Parking.Models.DB
+namespace VIP_Parking.Models.Database
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class VIPParkingEntities : DbContext
+    public partial class VIPPARKINGEntities1 : DbContext
     {
-        public VIPParkingEntities()
-            : base("name=VIPParkingEntities")
+        public VIPPARKINGEntities1()
+            : base("name=VIPPARKINGEntities1")
         {
         }
     
@@ -25,5 +25,13 @@ namespace VIP_Parking.Models.DB
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<Department> Departments { get; set; }
+        public virtual DbSet<Event> Events { get; set; }
+        public virtual DbSet<Lot> Lots { get; set; }
+        public virtual DbSet<ParkingSpot> ParkingSpots { get; set; }
+        public virtual DbSet<Requester> Requesters { get; set; }
+        public virtual DbSet<Reservation> Reservations { get; set; }
+        public virtual DbSet<User> Users { get; set; }
     }
 }
