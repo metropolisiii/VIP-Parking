@@ -7,7 +7,6 @@ using Microsoft.Owin.Security;
 using MyProject;
 using VIP_Parking.Models.Database;
 using System.Linq;
-using VIP_Parking.Models;
 
 namespace ActiveDirectoryAuthentication.Controllers
 {
@@ -80,7 +79,7 @@ namespace ActiveDirectoryAuthentication.Controllers
                     };
                     db.Requesters.Add(requester);
                     db.SaveChanges();
-                    Session["userID"] = requester.Requestor_ID;
+                    Session["userID"] = requester.Requester_ID;
                 }
                 else
                 {
@@ -99,6 +98,7 @@ namespace ActiveDirectoryAuthentication.Controllers
                         {
                             Console.WriteLine(e);
                         }
+                        Session["userID"] = requester.Requester_ID;
                     }
 
                 }
