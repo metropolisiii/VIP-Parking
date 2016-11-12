@@ -43,6 +43,7 @@ namespace ActiveDirectoryAuthentication.Models
 
 
             bool isAuthenticated = false;
+            bool isAdmin = false;
             UserPrincipal userPrincipal = null;
             try
             {
@@ -80,6 +81,10 @@ namespace ActiveDirectoryAuthentication.Models
             {
                 return new AuthenticationResult("You are not authorized to access this application.");
             }
+            if (IsUserGroupMember(principalContext, userPrincipal, username, "cl-members"))
+            {
+                isAdmin = true;
+            }
             var identity = CreateIdentity(userPrincipal);
 
             authenticationManager.SignOut(MyAuthentication.ApplicationCookie);
@@ -93,7 +98,7 @@ namespace ActiveDirectoryAuthentication.Models
             sess.Session["lastname"] = userPrincipal.Surname;
             sess.Session["email"] = userPrincipal.EmailAddress;
             sess.Session["user_department"] = GetProperty(directoryEntry, "Department");
-
+            sess.Session["is_admin"] = isAdmin;
             return new AuthenticationResult();
         }
 

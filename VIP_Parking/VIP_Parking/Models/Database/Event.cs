@@ -21,7 +21,7 @@ namespace VIP_Parking.Models.Database
         }
     
         public int Event_ID { get; set; }
-        public int Event_Name { get; set; }
+        public string Event_Name { get; set; }
         public System.DateTime Event_Start_Time { get; set; }
         public System.DateTime Event_End_Time { get; set; }
         public int Event_Spots_Needed { get; set; }
