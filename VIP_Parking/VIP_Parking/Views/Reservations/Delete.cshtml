@@ -1,0 +1,104 @@
+﻿@model VIP_Parking.Models.Database.Reservation
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Reservation</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.RecipientName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RecipientName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NumOfSlots)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NumOfSlots)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RecipientEmail)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RecipientEmail)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Start_Time)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Start_Time)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.End_Time)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.End_Time)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Category.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Category.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.Event_ID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Event.Event_ID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GateCode1.GateCode1)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GateCode1.GateCode1)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ParkingSpot.Location)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ParkingSpot.Location)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Requester.Username)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Requester.Username)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

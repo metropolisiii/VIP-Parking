@@ -1,0 +1,33 @@
+﻿@model IEnumerable<VIP_Parking.Models.Database.Reservation>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Your Existing Reservations</h2>
+
+<p class="right">
+    @Html.ActionLink("New Reservation", "Create", new { controller = "Reservations" }, new { @class = "link_button purple" })
+</p>
+<div class="table">
+   @foreach (var item in Model) {
+       var weekDay = item.Start_Time.DayOfWeek;
+
+    <div class="table-row">
+        <div class="table-column event_name">
+            @{ 
+                string eventName = "";
+                if (item.Event != null)
+                {
+                    eventName = item.Event.Event_Name;
+                }
+            }
+            @Html.ActionLink(eventName+" "+@weekDay+", "+item.Start_Time.ToString("MMMM dd - h:mmtt") + "-"+item.End_Time.ToString("h:mmtt"),"Details",new { id=item.Reserv_ID })
+        </div>
+        <div class="table-column">
+            @Html.ActionLink("Cancel","Delete",new { id=item.Reserv_ID }, new { @class="link_button white"})
+        </div>
+    </div>
+}
+
+</div>
