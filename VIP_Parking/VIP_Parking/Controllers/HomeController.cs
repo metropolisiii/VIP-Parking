@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+
 
 namespace VIP_Parking.Controllers
 {
@@ -12,7 +9,10 @@ namespace VIP_Parking.Controllers
         public ActionResult Index()
         {
             ViewBag.Message = "";
-
-            return View();
-        }    }
+            if (Session["userID"] != null)
+                return RedirectToAction("Index","Reservations");
+            else
+                return RedirectToAction("Logoff", "Login");
+        }
+    }
 }
