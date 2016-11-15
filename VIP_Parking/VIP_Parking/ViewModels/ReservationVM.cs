@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+using VIP_Parking.Models.Database;
+
+namespace VIP_Parking.ViewModels
+{
+    public class ReservationVM
+    {
+        public string RecipientName { get; set; }
+        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+        public string RecipientEmail { get; set; }
+        public Nullable<int> Category_ID { get; set; }
+        public string Event { get; set; }
+        [Required]
+        [VIPParking.ValidationAttributes.CheckDateRange]
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
+        public System.DateTime Date { get; set; }
+        [Required]
+        [RegularExpression("^(1[0-2]|[1-9]):[0-5][0-9]", ErrorMessage = "Invalid time format (h:mm)")]
+        public string Start_Time { get; set; }
+        public string Start_Ampm { get; set; }
+        [Required]
+        [RegularExpression("^(1[0-2]|[1-9]):[0-5][0-9]", ErrorMessage = "Invalid time format (h:mm)")]
+        public string End_Time { get; set; }
+        public string End_Ampm { get; set; }
+        [VIPParking.ValidationAttributes.ValidNumSlots]
+        [Required]
+        public int NumOfSlots { get; set; }
+        
+        public Nullable<int> Dept_ID { get; set; }
+    }
+}

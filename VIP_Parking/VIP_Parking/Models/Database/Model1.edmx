@@ -4,26 +4,26 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="VIPPARKINGModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="VIPPARKINGModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Category">
           <Key>
             <PropertyRef Name="Category_ID" />
           </Key>
-          <Property Name="Category_ID" Type="int" Nullable="false" />
+          <Property Name="Category_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Department">
           <Key>
             <PropertyRef Name="Dept_ID" />
           </Key>
-          <Property Name="Dept_ID" Type="int" Nullable="false" />
+          <Property Name="Dept_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Dept_name" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Events">
           <Key>
             <PropertyRef Name="Event_ID" />
           </Key>
-          <Property Name="Event_ID" Type="int" Nullable="false" />
+          <Property Name="Event_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Event_Name" Type="varchar" MaxLength="255" Nullable="false" />
           <Property Name="Event_Start_Time" Type="datetime" Nullable="false" />
           <Property Name="Event_End_Time" Type="datetime" Nullable="false" />
@@ -41,7 +41,7 @@
           <Key>
             <PropertyRef Name="Lot_ID" />
           </Key>
-          <Property Name="Lot_ID" Type="int" Nullable="false" />
+          <Property Name="Lot_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Lot_Name" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Lot_Spaces_Available" Type="int" Nullable="false" />
         </EntityType>
@@ -49,7 +49,7 @@
           <Key>
             <PropertyRef Name="ParkingSpot_ID" />
           </Key>
-          <Property Name="ParkingSpot_ID" Type="int" Nullable="false" />
+          <Property Name="ParkingSpot_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ParkingLot_ID" Type="int" Nullable="false" />
           <Property Name="Location" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Status" Type="char" MaxLength="1" Nullable="false" />
@@ -65,7 +65,7 @@
           <Key>
             <PropertyRef Name="Requester_ID" />
           </Key>
-          <Property Name="Requester_ID" Type="int" Nullable="false" />
+          <Property Name="Requester_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Username" Type="varchar" MaxLength="50" />
           <Property Name="Password" Type="varchar" MaxLength="50" />
           <Property Name="Firstname" Type="varchar" MaxLength="50" Nullable="false" />
@@ -77,17 +77,19 @@
           <Key>
             <PropertyRef Name="Reserv_ID" />
           </Key>
-          <Property Name="Reserv_ID" Type="int" Nullable="false" />
+          <Property Name="Reserv_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Requester_ID" Type="int" Nullable="false" />
           <Property Name="RecipientName" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="NumOfSlots" Type="int" />
+          <Property Name="NumOfSlots" Type="int" Nullable="false" />
           <Property Name="RecipientEmail" Type="varchar" MaxLength="50" />
           <Property Name="Category_ID" Type="int" />
-          <Property Name="ParkingSpotID" Type="int" Nullable="false" />
+          <Property Name="ParkingSpotID" Type="int" />
           <Property Name="Event_ID" Type="int" />
           <Property Name="GateCode" Type="int" />
-          <Property Name="Start_Time" Type="datetime" Nullable="false" />
-          <Property Name="End_Time" Type="datetime" Nullable="false" />
+          <Property Name="Start_Time" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="End_Time" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="Dept_ID" Type="int" />
+          <Property Name="Approved" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="FK_ParkingSpot_Lot">
           <End Role="Lot" Type="Self.Lot" Multiplicity="1" />
@@ -137,6 +139,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Reservation_Department">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="Dept_ID" />
+            </Principal>
+            <Dependent Role="Reservation">
+              <PropertyRef Name="Dept_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Reservation_Events">
           <End Role="Events" Type="Self.Events" Multiplicity="0..1" />
           <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
@@ -162,7 +176,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Reservation_ParkingSpot">
-          <End Role="ParkingSpot" Type="Self.ParkingSpot" Multiplicity="1" />
+          <End Role="ParkingSpot" Type="Self.ParkingSpot" Multiplicity="0..1" />
           <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ParkingSpot">
@@ -211,6 +225,10 @@
             <End Role="Category" EntitySet="Category" />
             <End Role="Reservation" EntitySet="Reservation" />
           </AssociationSet>
+          <AssociationSet Name="FK_Reservation_Department" Association="Self.FK_Reservation_Department">
+            <End Role="Department" EntitySet="Department" />
+            <End Role="Reservation" EntitySet="Reservation" />
+          </AssociationSet>
           <AssociationSet Name="FK_Reservation_Events" Association="Self.FK_Reservation_Events">
             <End Role="Events" EntitySet="Events" />
             <End Role="Reservation" EntitySet="Reservation" />
@@ -228,7 +246,8 @@
             <End Role="Reservation" EntitySet="Reservation" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="VIPPARKINGModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -236,7 +255,7 @@
           <Key>
             <PropertyRef Name="Category_ID" />
           </Key>
-          <Property Name="Category_ID" Type="Int32" Nullable="false" />
+          <Property Name="Category_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Title" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Reservations" Relationship="Self.FK_Reservation_Category" FromRole="Category" ToRole="Reservation" />
         </EntityType>
@@ -244,16 +263,17 @@
           <Key>
             <PropertyRef Name="Dept_ID" />
           </Key>
-          <Property Name="Dept_ID" Type="Int32" Nullable="false" />
+          <Property Name="Dept_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Dept_name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Requesters" Relationship="Self.FK_Requester_Department" FromRole="Department" ToRole="Requester" />
+          <NavigationProperty Name="Reservations" Relationship="Self.FK_Reservation_Department" FromRole="Department" ToRole="Reservation" />
         </EntityType>
         <EntityType Name="Event">
           <Key>
             <PropertyRef Name="Event_ID" />
           </Key>
-          <Property Name="Event_ID" Type="Int32" Nullable="false" />
-          <Property Name="Event_Name" Type="String" Nullable="false" />
+          <Property Name="Event_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Event_Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Event_Start_Time" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Event_End_Time" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Event_Spots_Needed" Type="Int32" Nullable="false" />
@@ -272,7 +292,7 @@
           <Key>
             <PropertyRef Name="Lot_ID" />
           </Key>
-          <Property Name="Lot_ID" Type="Int32" Nullable="false" />
+          <Property Name="Lot_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Lot_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Lot_Spaces_Available" Type="Int32" Nullable="false" />
           <NavigationProperty Name="ParkingSpots" Relationship="Self.FK_ParkingSpot_Lot" FromRole="Lot" ToRole="ParkingSpot" />
@@ -281,7 +301,7 @@
           <Key>
             <PropertyRef Name="ParkingSpot_ID" />
           </Key>
-          <Property Name="ParkingSpot_ID" Type="Int32" Nullable="false" />
+          <Property Name="ParkingSpot_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ParkingLot_ID" Type="Int32" Nullable="false" />
           <Property Name="Location" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
@@ -300,7 +320,7 @@
           <Key>
             <PropertyRef Name="Requester_ID" />
           </Key>
-          <Property Name="Requester_ID" Type="Int32" Nullable="false" />
+          <Property Name="Requester_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Firstname" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
@@ -314,18 +334,21 @@
           <Key>
             <PropertyRef Name="Reserv_ID" />
           </Key>
-          <Property Name="Reserv_ID" Type="Int32" Nullable="false" />
+          <Property Name="Reserv_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Requester_ID" Type="Int32" Nullable="false" />
           <Property Name="RecipientName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="NumOfSlots" Type="Int32" />
+          <Property Name="NumOfSlots" Type="Int32" Nullable="false" />
           <Property Name="RecipientEmail" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Category_ID" Type="Int32" />
-          <Property Name="ParkingSpotID" Type="Int32" Nullable="false" />
+          <Property Name="ParkingSpotID" Type="Int32" />
           <Property Name="Event_ID" Type="Int32" />
           <Property Name="GateCode" Type="Int32" />
-          <Property Name="Start_Time" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="End_Time" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Start_Time" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="End_Time" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="Dept_ID" Type="Int32" />
+          <Property Name="Approved" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Category" Relationship="Self.FK_Reservation_Category" FromRole="Reservation" ToRole="Category" />
+          <NavigationProperty Name="Department" Relationship="Self.FK_Reservation_Department" FromRole="Reservation" ToRole="Department" />
           <NavigationProperty Name="Event" Relationship="Self.FK_Reservation_Events" FromRole="Reservation" ToRole="Events" />
           <NavigationProperty Name="GateCode1" Relationship="Self.FK_Reservation_GateCode" FromRole="Reservation" ToRole="GateCode" />
           <NavigationProperty Name="ParkingSpot" Relationship="Self.FK_Reservation_ParkingSpot" FromRole="Reservation" ToRole="ParkingSpot" />
@@ -352,6 +375,18 @@
               <PropertyRef Name="Dept_ID" />
             </Principal>
             <Dependent Role="Requester">
+              <PropertyRef Name="Dept_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Reservation_Department">
+          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
+          <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Department">
+              <PropertyRef Name="Dept_ID" />
+            </Principal>
+            <Dependent Role="Reservation">
               <PropertyRef Name="Dept_ID" />
             </Dependent>
           </ReferentialConstraint>
@@ -393,7 +428,7 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Reservation_ParkingSpot">
-          <End Role="ParkingSpot" Type="Self.ParkingSpot" Multiplicity="1" />
+          <End Role="ParkingSpot" Type="Self.ParkingSpot" Multiplicity="0..1" />
           <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ParkingSpot">
@@ -445,6 +480,10 @@
           <AssociationSet Name="FK_Requester_Department" Association="Self.FK_Requester_Department">
             <End Role="Department" EntitySet="Departments" />
             <End Role="Requester" EntitySet="Requesters" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Reservation_Department" Association="Self.FK_Reservation_Department">
+            <End Role="Department" EntitySet="Departments" />
+            <End Role="Reservation" EntitySet="Reservations" />
           </AssociationSet>
           <AssociationSet Name="FK_Reservation_Events" Association="Self.FK_Reservation_Events">
             <End Role="Events" EntitySet="Events" />
@@ -567,6 +606,8 @@
                 <ScalarProperty Name="GateCode" ColumnName="GateCode" />
                 <ScalarProperty Name="Start_Time" ColumnName="Start_Time" />
                 <ScalarProperty Name="End_Time" ColumnName="End_Time" />
+                <ScalarProperty Name="Dept_ID" ColumnName="Dept_ID" />
+                <ScalarProperty Name="Approved" ColumnName="Approved" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

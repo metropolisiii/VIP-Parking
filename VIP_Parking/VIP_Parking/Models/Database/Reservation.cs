@@ -23,16 +23,19 @@ namespace VIP_Parking.Models.Database
         public int Reserv_ID { get; set; }
         public int Requester_ID { get; set; }
         public string RecipientName { get; set; }
-        public Nullable<int> NumOfSlots { get; set; }
+        public int NumOfSlots { get; set; }
         public string RecipientEmail { get; set; }
         public Nullable<int> Category_ID { get; set; }
-        public int ParkingSpotID { get; set; }
+        public Nullable<int> ParkingSpotID { get; set; }
         public Nullable<int> Event_ID { get; set; }
         public Nullable<int> GateCode { get; set; }
         public System.DateTime Start_Time { get; set; }
         public System.DateTime End_Time { get; set; }
+        public Nullable<int> Dept_ID { get; set; }
+        public bool Approved { get; set; }
     
         public virtual Category Category { get; set; }
+        public virtual Department Department { get; set; }
         public virtual Event Event { get; set; }
         public virtual GateCode GateCode1 { get; set; }
         public virtual ParkingSpot ParkingSpot { get; set; }

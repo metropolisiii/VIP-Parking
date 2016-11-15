@@ -5,8 +5,14 @@
         <title>@ViewBag.Title - Regis Parking Reservations</title>
         <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
         <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         @Styles.Render("~/Content/css")
         @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/Scripts/jquery-ui-1.12.1.js")
+        @Scripts.Render("~/Scripts/Scripts.js")
+        @RenderSection("scripts", required: false)     
     </head>
     <body>
         <header>
@@ -22,7 +28,7 @@
                 <div class="user_links">
                     @if (Request.IsAuthenticated)
                     {
-                        <span>Welcome, @User.Identity.Name</span>
+                        <span>Welcome, @Session["firstname"]</span>
                         <span>@Html.ActionLink("Log out", "Logoff", "Login")</span>
                     }
                 </div><!--.user_links-->
@@ -44,7 +50,6 @@
             </div>
         </footer>
 
-        @Scripts.Render("~/bundles/jquery")
-        @RenderSection("scripts", required: false)
+       
     </body>
 </html>
