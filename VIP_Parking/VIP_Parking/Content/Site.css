@@ -2,6 +2,7 @@
     background-color: #e2e2e2;
     margin: 0;
     padding: 0;
+    font-size:15px;
 }
 
 body {
@@ -84,6 +85,7 @@ h1 {
 
 h2 {
     font-size: 1.75em;
+    margin-bottom: 15px;
 }
 
 h3 {
@@ -137,7 +139,34 @@ footer {
     height: 100px;
 }
 
-
+.datepicker {
+    float: left;
+    margin-right: 10px;
+    width: 33%;
+}
+.ui-datepicker-trigger {
+    margin-top: 13px;
+}
+#visittimes input:not([type="radio"]) {
+    width: 25%;
+}
+.smallinput {
+    width: 33%;
+}
+input[readonly="readonly"] {
+    background: #fff none repeat scroll 0 0 !important;
+}
+input[type="radio"] {
+    clear: none;
+    display: table-row-group;
+    width: auto;
+}
+.ampm.col-md-4 div {
+    display: inline-block;
+    margin-right: 10px;
+    position: relative;
+    top: 10px;
+}
 /* site title
 ----------------------------------------------------------*/
 .site-title {
@@ -425,7 +454,12 @@ aside {
 #logoutForm {
     display: inline;
 }
-
+/* Reservations */
+#ReservationForm {
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
 /* contact */
 .contact h3 {
     font-size: 1.2em;
@@ -471,7 +505,7 @@ label.checkbox {
 }
 
 input, textarea {
-    border: 1px solid #e2e2e2;
+    border: 1px solid #000000;
     background: #fff;
     color: #333;
     font-size: 1.2em;
@@ -636,6 +670,11 @@ tr.pager td {
 /********************
 *   Mobile Styles   *
 ********************/
+@media only screen and (max-width: 992px) {
+    .form-horizontal .control-label {
+       text-align: left;
+    }
+}
 @media only screen and (max-width: 850px) {
 
     /* header

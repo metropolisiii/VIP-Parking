@@ -18,6 +18,7 @@ namespace VIP_Parking.Models.Database
         public Department()
         {
             this.Requesters = new HashSet<Requester>();
+            this.Reservations = new HashSet<Reservation>();
         }
     
         public int Dept_ID { get; set; }
@@ -25,5 +26,7 @@ namespace VIP_Parking.Models.Database
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Requester> Requesters { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }
