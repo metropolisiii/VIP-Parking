@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using VIP_Parking.Models.Database;
 using VIP_Parking.ViewModels;
+using VIP_Parking.Helpers;
 
 namespace VIP_Parking.Controllers
 {
@@ -24,7 +25,7 @@ namespace VIP_Parking.Controllers
             //Get this user's current reservations. Any reservations made in the past will not be displayed 
             try {
                 var s = (int)Session["userID"];
-                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Requester_ID == s && r.End_Time >= DateTime.Now).OrderBy(r => r.Start_Time);
+                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Requester_ID == s && r.End_Time >= DateTime.Now && !r.isWaitingList).OrderBy(r => r.Start_Time);
                 return View(reservations.ToList());
             }
             catch(Exception e)
@@ -32,9 +33,13 @@ namespace VIP_Parking.Controllers
                 return RedirectToAction("Logoff", "Login");
             }
       }
-        public ActionResult Success()
+        public ActionResult Success(string waiting_list)
         {
-            string message = "<p>Thank you for submitting a parking reservation request.</p><p>Your request will be reviewed and you should be receiving an email within the next few days.</p><p>If your request is approved, you'll receive a parking permit as an attachment in your email.</p>";
+            string message = "";
+            if (waiting_list == "true")
+                message = "<p>Thank you for adding your parking lot request to the waiting list</p><p>We will review your request and if spaces open up, you may be eligible for parking at your requested times. If this is the case, we will be notifying you via the email address of your account.</p>";
+            else
+                message = "<p>Thank you for submitting a parking reservation request.</p><p>Your request will be reviewed and you should be receiving an email within the next few days.</p><p>If your request is approved, you'll receive a parking permit as an attachment in your email.</p>";
             ViewData["message"] = message;
             return View();
         }
@@ -71,17 +76,22 @@ namespace VIP_Parking.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(ReservationVM reservation)
+        public ActionResult Create(ReservationVM reservation, string waiting_list)
         {
+            ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title", reservation.Category_ID);
+            ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", reservation.Dept_ID);
             if (ModelState.IsValid)
             {
                 DateTime start_time, end_time;
                 int event_id = 0;
                 int gatecode = 0;
+
                 //Make sure the num of slots the user is asking for does not exceed the number of slots available. If it does, display the number of slots available.
+                bool isReserveable = NumSlotsHelper.isReserveable(reservation);
 
                 //Get the event. If one doesn't exist create one.
-                if (reservation.Event != null) { 
+                if (reservation.Event != null && isReserveable)
+                {
                     var e = db.Events.Where(i => i.Event_Name.ToLower() == reservation.Event.ToLower());
                     if (e.Count() == 0)
                     {
@@ -106,10 +116,15 @@ namespace VIP_Parking.Controllers
                     gatecode = g.GateCode1;
 
                 //Format the start and end times
-                string start_temp = reservation.Date.ToString("yyyy-MM-dd") + " " + reservation.Start_Time+" "+reservation.Start_Ampm;
-                string end_temp = reservation.Date.ToString("yyyy-MM-dd") + " " + reservation.End_Time + " "+reservation.End_Ampm;
+                string start_temp = reservation.Date.ToString("yyyy-MM-dd") + " " + reservation.Start_Time + " " + reservation.Start_Ampm;
+                string end_temp = reservation.Date.ToString("yyyy-MM-dd") + " " + reservation.End_Time + " " + reservation.End_Ampm;
                 start_time = DateTime.ParseExact(start_temp, "yyyy-MM-dd h:mm tt", null);
                 end_time = DateTime.ParseExact(end_temp, "yyyy-MM-dd h:mm tt", null);
+                if (!isReserveable && waiting_list == null)
+                {
+                    ModelState.AddModelError("ErrorNumSlots", "You have exceeded the number of available spaces. The number of avaiable spaces is: " + (NumSlotsHelper.getSlotsInLot() - NumSlotsHelper.getSlotsTaken(start_time, end_time)) + ". You may check back later to see if any spaces have opened up. <button id='waiting_list' name='waiting_list' value='waiting_list' type='submit'>Place me on a waiting list</button> ");
+                    return View(reservation);
+                }
                 Reservation r = new Reservation
                 {
                     Requester_ID = (int)Session["userID"],
@@ -125,8 +140,11 @@ namespace VIP_Parking.Controllers
                 };
                 if (event_id != 0)
                     r.Event_ID = event_id;
+                if (waiting_list != null)
+                    r.isWaitingList = true;
                 db.Reservations.Add(r);
-                try {
+                try
+                {
                     db.SaveChanges();
                 }
                 catch (DbEntityValidationException ex)
@@ -144,11 +162,30 @@ namespace VIP_Parking.Controllers
                     // Throw a new DbEntityValidationException with the improved exception message.
                     throw new DbEntityValidationException(exceptionMessage, ex.EntityValidationErrors);
                 }
-                return RedirectToAction("Success");
-            }
 
-            ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title", reservation.Category_ID);
-            ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", reservation.Dept_ID);
+                //Email administrators notification to administrator notifying him or her that someone has placed a reservation request
+                //Get administrators
+                var admin_results = db.Requesters.Where(i => i.IsAdmin == true);
+                List<string> recipients = new List<string>();
+                foreach (var rec in admin_results)
+                {
+                    recipients.Add(rec.Email);
+                }
+                if (waiting_list == null)
+                {
+                    EmailHelper.SendEmail("Someone Has Submitted a Reservation for a Parking Spot", Session["firstname"] + " " + Session["lastname"] + " has submitted a request for " + reservation.NumOfSlots + " spaces on " + reservation.Date.ToString("MM/dd/yyyy") + ". You may log into the Regis Parking Reservation system at <a href='http://parking.regis.edu/admin'>http://parking.regis.edu/admin</a> to review this reservation.", recipients);
+
+                    //Email requestor notifying him or her that a reservation has been made and needs reviewing
+                    EmailHelper.SendEmail("Comfirmation for Regis Parking Lot Reservation", Session["firstname"] + ",<br/><br/>You are receiving this email to verify that we have received your submission for a parking request for " + reservation.NumOfSlots + " spaces on " + reservation.Date.ToString("MM/dd/yyyy") + ". Please give us 24 hours to review your reservation to determine if we will be able to accommodate your request.<br/><br/>Sincerely, <br/>Regis Parking Administration", (string)Session["email"]);
+                    return RedirectToAction("Success");
+                }
+                else {
+                    //If the user placed himself on a waiting list, email the administrator
+                    EmailHelper.SendEmail("Someone Was Placed on the Regis Parking Waiting List", Session["firstname"] + " " + Session["lastname"] + " has submitted a request for " + reservation.NumOfSlots + " spaces on " + reservation.Date.ToString("MM/dd/yyyy") + "between "+reservation.Start_Time+reservation.Start_Time+" and "+reservation.End_Time+reservation.End_Ampm+". Currently, the lot is full at this time and the requester has chosen to be placed on the waiting list. You may log into the Regis Parking Reservation system at <a href='http://parking.regis.edu/admin'>http://parking.regis.edu/admin</a> to review this reservation.", recipients);
+                    return RedirectToAction("Success",new { waiting_list = "true" });
+                }
+                
+            }
             return View(reservation);
         }
 

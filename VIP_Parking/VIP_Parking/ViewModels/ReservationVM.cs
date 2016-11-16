@@ -9,6 +9,7 @@ namespace VIP_Parking.ViewModels
 {
     public class ReservationVM
     {
+        [Required(ErrorMessage = "Guest Name is required")]
         public string RecipientName { get; set; }
         [EmailAddress(ErrorMessage = "Please enter a valid email address")]
         public string RecipientEmail { get; set; }
@@ -18,16 +19,16 @@ namespace VIP_Parking.ViewModels
         [VIPParking.ValidationAttributes.CheckDateRange]
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}")]
         public System.DateTime Date { get; set; }
-        [Required]
+        [Required(ErrorMessage = "From Time is required")]
         [RegularExpression("^(1[0-2]|[1-9]):[0-5][0-9]", ErrorMessage = "Invalid time format (h:mm)")]
         public string Start_Time { get; set; }
         public string Start_Ampm { get; set; }
-        [Required]
+        [Required(ErrorMessage = "End Time is required")]
         [RegularExpression("^(1[0-2]|[1-9]):[0-5][0-9]", ErrorMessage = "Invalid time format (h:mm)")]
         public string End_Time { get; set; }
         public string End_Ampm { get; set; }
-        [VIPParking.ValidationAttributes.ValidNumSlots]
-        [Required]
+        [Required(ErrorMessage = "At least 1 space is needed")]
+        [Range(1, Int32.MaxValue, ErrorMessage = "Value not within a valid range")]
         public int NumOfSlots { get; set; }
         
         public Nullable<int> Dept_ID { get; set; }

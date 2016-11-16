@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="VIPPARKINGModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="VIPPARKINGModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Category">
           <Key>
             <PropertyRef Name="Category_ID" />
@@ -72,6 +72,7 @@
           <Property Name="Lastname" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Dept_ID" Type="int" />
           <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsAdmin" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Reservation">
           <Key>
@@ -90,6 +91,7 @@
           <Property Name="End_Time" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="Dept_ID" Type="int" />
           <Property Name="Approved" Type="bit" Nullable="false" />
+          <Property Name="isWaitingList" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="FK_ParkingSpot_Lot">
           <End Role="Lot" Type="Self.Lot" Multiplicity="1" />
@@ -246,8 +248,7 @@
             <End Role="Reservation" EntitySet="Reservation" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="VIPPARKINGModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -329,6 +330,7 @@
           <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="Department" Relationship="Self.FK_Requester_Department" FromRole="Requester" ToRole="Department" />
           <NavigationProperty Name="Reservations" Relationship="Self.FK_Reservation_Requester" FromRole="Requester" ToRole="Reservation" />
+          <Property Name="IsAdmin" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Reservation">
           <Key>
@@ -354,6 +356,7 @@
           <NavigationProperty Name="ParkingSpot" Relationship="Self.FK_Reservation_ParkingSpot" FromRole="Reservation" ToRole="ParkingSpot" />
           <NavigationProperty Name="Permits" Relationship="Self.FK_Permit_Reservation" FromRole="Reservation" ToRole="Permit" />
           <NavigationProperty Name="Requester" Relationship="Self.FK_Reservation_Requester" FromRole="Reservation" ToRole="Requester" />
+          <Property Name="isWaitingList" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_Reservation_Category">
           <End Role="Category" Type="Self.Category" Multiplicity="0..1" />
@@ -582,6 +585,7 @@
           <EntitySetMapping Name="Requesters">
             <EntityTypeMapping TypeName="VIPPARKINGModel.Requester">
               <MappingFragment StoreEntitySet="Requester">
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
                 <ScalarProperty Name="Requester_ID" ColumnName="Requester_ID" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
@@ -595,6 +599,7 @@
           <EntitySetMapping Name="Reservations">
             <EntityTypeMapping TypeName="VIPPARKINGModel.Reservation">
               <MappingFragment StoreEntitySet="Reservation">
+                <ScalarProperty Name="isWaitingList" ColumnName="isWaitingList" />
                 <ScalarProperty Name="Reserv_ID" ColumnName="Reserv_ID" />
                 <ScalarProperty Name="Requester_ID" ColumnName="Requester_ID" />
                 <ScalarProperty Name="RecipientName" ColumnName="RecipientName" />
