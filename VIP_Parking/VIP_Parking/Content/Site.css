@@ -104,7 +104,16 @@ h5, h6 {
         padding: 0;
         text-decoration: none;
     }
-
+.field-validation-error button {
+    background: #f8bebe none repeat scroll 0 0;
+    border-radius: 5px;
+    box-shadow: 10px 10px 11px 1px;
+    color: #230303;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 6px;
+}
 
 /* main layout
 ----------------------------------------------------------*/

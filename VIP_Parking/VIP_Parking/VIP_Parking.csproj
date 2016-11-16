@@ -237,7 +237,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\AuthorizeADAttribute.cs" />
+    <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\LDAPHelper.cs" />
+    <Compile Include="Helpers\NumSlotsHelper.cs" />
     <Compile Include="LogExtensions.cs" />
     <Compile Include="Models\AdAuthenticationService.cs" />
     <Compile Include="Models\Database\Category.cs">
