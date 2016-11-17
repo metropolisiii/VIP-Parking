@@ -7,6 +7,7 @@ using Microsoft.Owin.Security;
 using MyProject;
 using VIP_Parking.Models.Database;
 using System.Linq;
+using VIP_Parking.ViewModels;
 
 namespace ActiveDirectoryAuthentication.Controllers
 {
@@ -24,7 +25,7 @@ namespace ActiveDirectoryAuthentication.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public virtual ActionResult Index(LoginViewModel model, string returnUrl)
+        public virtual ActionResult Index(LoginVM model, string returnUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -102,7 +103,7 @@ namespace ActiveDirectoryAuthentication.Controllers
                     }
 
                 }
-
+                Session["Dept_ID"] = deptID;
                 return RedirectToLocal(returnUrl);
             }
             ModelState.AddModelError("", authenticationResult.ErrorMessage);
