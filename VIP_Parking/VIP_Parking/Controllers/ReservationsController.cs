@@ -25,7 +25,7 @@ namespace VIP_Parking.Controllers
             //Get this user's current reservations. Any reservations made in the past will not be displayed 
             try {
                 var s = (int)Session["userID"];
-                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Requester_ID == s && r.End_Time >= DateTime.Now && !r.isWaitingList).OrderBy(r => r.Start_Time);
+                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Approved == true && r.Requester_ID == s && r.End_Time >= DateTime.Now && !r.isWaitingList).OrderBy(r => r.Start_Time);
                 return View(reservations.ToList());
             }
             catch(Exception e)
@@ -67,7 +67,7 @@ namespace VIP_Parking.Controllers
             Session["email"] = "jason.kirby@cablelabs.com";
             Session["userID"] = 1;
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title");
-            ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name");
+            ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", Session["Dept_ID"]);
             return View();
         }
 

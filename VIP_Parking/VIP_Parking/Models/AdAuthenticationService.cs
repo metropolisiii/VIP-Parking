@@ -32,14 +32,16 @@ namespace ActiveDirectoryAuthentication.Models
 
         public AuthenticationResult SignIn(String username, String password)
         {
-#if !DEBUG
+#if DEBUG
             // authenticates against your local machine - for development time
             ContextType authenticationType = ContextType.Machine;
+            PrincipalContext principalContext = new PrincipalContext(authenticationType);
 #else
             // authenticates against your Domain AD
             ContextType authenticationType = ContextType.Domain;
+            PrincipalContext principalContext = new PrincipalContext(authenticationType, "cablelabs.com", "OU=community,DC=cablelabs,DC=com", username, password);
 #endif
-            PrincipalContext principalContext = new PrincipalContext(authenticationType, "cablelabs.com","OU=community,DC=cablelabs,DC=com", username, password);
+
 
 
             bool isAuthenticated = false;
@@ -77,6 +79,7 @@ namespace ActiveDirectoryAuthentication.Models
                 // revealing this information
                 return new AuthenticationResult("Your account is disabled");
             }
+#if RELEASE
             if (!IsUserGroupMember(principalContext, userPrincipal, username,"cl-employees"))
             {
                 return new AuthenticationResult("You are not authorized to access this application.");
@@ -85,6 +88,7 @@ namespace ActiveDirectoryAuthentication.Models
             {
                 isAdmin = true;
             }
+#endif
             var identity = CreateIdentity(userPrincipal);
 
             authenticationManager.SignOut(MyAuthentication.ApplicationCookie);
@@ -93,12 +97,21 @@ namespace ActiveDirectoryAuthentication.Models
             //Store user's information in session variable
             DirectoryEntry directoryEntry = (userPrincipal.GetUnderlyingObject() as DirectoryEntry);
             HttpContext sess = HttpContext.Current;
+#if DEBUG
+            sess.Session["username"] = "tuser";
+            sess.Session["firstname"] = "Test";
+            sess.Session["lastname"] = "User";
+            sess.Session["email"] = "Testuser@gmail.com";
+            sess.Session["user_department"] = "IT";
+            sess.Session["is_admin"] = false;
+#else
             sess.Session["username"] = username;
             sess.Session["firstname"] = userPrincipal.GivenName;
             sess.Session["lastname"] = userPrincipal.Surname;
             sess.Session["email"] = userPrincipal.EmailAddress;
             sess.Session["user_department"] = GetProperty(directoryEntry, "Department");
             sess.Session["is_admin"] = isAdmin;
+#endif
             return new AuthenticationResult();
         }
 
