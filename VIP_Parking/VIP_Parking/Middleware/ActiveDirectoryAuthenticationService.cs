@@ -6,10 +6,11 @@ using Microsoft.Owin.Security;
 using MyProject;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 
-namespace ActiveDirectoryAuthentication.Models
+namespace VIP_Parking.Middeware
 {
-    public class AdAuthenticationService
+    public class ActiveDirectoryAuthenticationService
     {
         public class AuthenticationResult
         {
@@ -17,43 +18,34 @@ namespace ActiveDirectoryAuthentication.Models
             {
                 ErrorMessage = errorMessage;
             }
-
+            
             public String ErrorMessage { get; private set; }
             public Boolean IsSuccess => String.IsNullOrEmpty(ErrorMessage);
         }
 
         private readonly IAuthenticationManager authenticationManager;
 
-        public AdAuthenticationService(IAuthenticationManager authenticationManager)
+        public ActiveDirectoryAuthenticationService(IAuthenticationManager authenticationManager)
         {
             this.authenticationManager = authenticationManager;
         }
-
-
+        
+        //Sign in handler
         public AuthenticationResult SignIn(String username, String password)
         {
-#if DEBUG
-            // authenticates against your local machine - for development time
-            ContextType authenticationType = ContextType.Machine;
-            PrincipalContext principalContext = new PrincipalContext(authenticationType);
-#else
             // authenticates against your Domain AD
             ContextType authenticationType = ContextType.Domain;
-            PrincipalContext principalContext = new PrincipalContext(authenticationType, "cablelabs.com", "OU=community,DC=cablelabs,DC=com", username, password);
-#endif
-
-
+            PrincipalContext principalContext = new PrincipalContext(authenticationType, WebConfigurationManager.AppSettings["ActiveDirectoryDomain"], WebConfigurationManager.AppSettings["ActiveDirectoryBaseOU"], username, password);
 
             bool isAuthenticated = false;
-            bool isAdmin = false;
             UserPrincipal userPrincipal = null;
+            
+            //Attempt the authentication
             try
             {
                 isAuthenticated = principalContext.ValidateCredentials(username, password, ContextOptions.Negotiate);
                 if (isAuthenticated)
-                {
                     userPrincipal = UserPrincipal.FindByIdentity(principalContext, IdentityType.SamAccountName, username);
-                }
             }
             catch (Exception)
             {
@@ -61,6 +53,7 @@ namespace ActiveDirectoryAuthentication.Models
                 userPrincipal = null;
             }
 
+            //Login information is invalid
             if (!isAuthenticated || userPrincipal == null)
             {
                 return new AuthenticationResult("Username or Password is not correct");
@@ -78,17 +71,7 @@ namespace ActiveDirectoryAuthentication.Models
                 // here can be a security related discussion weather it is worth 
                 // revealing this information
                 return new AuthenticationResult("Your account is disabled");
-            }
-#if RELEASE
-            if (!IsUserGroupMember(principalContext, userPrincipal, username,"cl-employees"))
-            {
-                return new AuthenticationResult("You are not authorized to access this application.");
-            }
-            if (IsUserGroupMember(principalContext, userPrincipal, username, "cl-members"))
-            {
-                isAdmin = true;
-            }
-#endif
+            }          
             var identity = CreateIdentity(userPrincipal);
 
             authenticationManager.SignOut(MyAuthentication.ApplicationCookie);
@@ -97,38 +80,18 @@ namespace ActiveDirectoryAuthentication.Models
             //Store user's information in session variable
             DirectoryEntry directoryEntry = (userPrincipal.GetUnderlyingObject() as DirectoryEntry);
             HttpContext sess = HttpContext.Current;
-#if DEBUG
-            sess.Session["username"] = "tuser";
-            sess.Session["firstname"] = "Test";
-            sess.Session["lastname"] = "User";
-            sess.Session["email"] = "Testuser@gmail.com";
-            sess.Session["user_department"] = "IT";
-            sess.Session["is_admin"] = false;
-#else
+
             sess.Session["username"] = username;
             sess.Session["firstname"] = userPrincipal.GivenName;
             sess.Session["lastname"] = userPrincipal.Surname;
             sess.Session["email"] = userPrincipal.EmailAddress;
             sess.Session["user_department"] = GetProperty(directoryEntry, "Department");
-            sess.Session["is_admin"] = isAdmin;
-#endif
+            sess.Session["is_admin"] = false;
+
             return new AuthenticationResult();
         }
-
-        public void addUserToDB(UserPrincipal userPrincipal)
-        {
-            
-            //Add or insert department in Departments table
-
-            //Add of insert user in Requester table
-        }
-        public static bool IsUserGroupMember(PrincipalContext context, UserPrincipal user, string userName, string groupName)
-        {
-            using (PrincipalSearchResult<Principal> groups = user.GetAuthorizationGroups())
-            {
-                return groups.OfType<GroupPrincipal>().Any(g => g.Name.Equals(groupName, StringComparison.OrdinalIgnoreCase));
-            }
-        }
+              
+        
         private string GetProperty(DirectoryEntry directoryEntry, string propertyName)
         {
             if (directoryEntry.Properties.Contains(propertyName))

@@ -78,8 +78,11 @@ namespace VIP_Parking.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(ReservationVM reservation, string waiting_list)
         {
+            //Build Select Lists
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title", reservation.Category_ID);
             ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", reservation.Dept_ID);
+
+            //If the reservation form validates
             if (ModelState.IsValid)
             {
                 DateTime start_time, end_time;
@@ -125,6 +128,8 @@ namespace VIP_Parking.Controllers
                     ModelState.AddModelError("ErrorNumSlots", "You have exceeded the number of available spaces. The number of avaiable spaces is: " + (NumSlotsHelper.getSlotsInLot() - NumSlotsHelper.getSlotsTaken(start_time, end_time)) + ". You may check back later to see if any spaces have opened up. <button id='waiting_list' name='waiting_list' value='waiting_list' type='submit'>Place me on a waiting list</button> ");
                     return View(reservation);
                 }
+
+                //Create the reservation
                 Reservation r = new Reservation
                 {
                     Requester_ID = (int)Session["userID"],
@@ -140,6 +145,8 @@ namespace VIP_Parking.Controllers
                 };
                 if (event_id != 0)
                     r.Event_ID = event_id;
+
+                //If this is a waiting list request
                 if (waiting_list != null)
                     r.isWaitingList = true;
                 db.Reservations.Add(r);
