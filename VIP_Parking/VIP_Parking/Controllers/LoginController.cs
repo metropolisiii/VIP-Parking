@@ -2,14 +2,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 using System.Web.Mvc;
-using ActiveDirectoryAuthentication.Models;
 using Microsoft.Owin.Security;
 using MyProject;
 using VIP_Parking.Models.Database;
 using System.Linq;
 using VIP_Parking.ViewModels;
+using VIP_Parking.Middeware;
+using VIP_Parking.Middleware;
 
-namespace ActiveDirectoryAuthentication.Controllers
+namespace VIP_Parking.Controllers
 {
     public class LoginController : Controller
     {
@@ -34,8 +35,11 @@ namespace ActiveDirectoryAuthentication.Controllers
 
             // usually this will be injected via DI. but creating this manually now for brevity
             IAuthenticationManager authenticationManager = HttpContext.GetOwinContext().Authentication;
-            var authService = new AdAuthenticationService(authenticationManager);
-
+#if DEBUG
+            var authService = new WindowsAuthenticationService(authenticationManager);
+#else
+            var authService = new ActiveDirectoryAuthenticationService(authenticationManager);
+#endif
             var authenticationResult = authService.SignIn(model.Username, model.Password);
 
             if (authenticationResult.IsSuccess)

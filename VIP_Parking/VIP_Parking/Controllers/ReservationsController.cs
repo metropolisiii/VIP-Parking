@@ -25,7 +25,7 @@ namespace VIP_Parking.Controllers
             //Get this user's current reservations. Any reservations made in the past will not be displayed 
             try {
                 var s = (int)Session["userID"];
-                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Approved == true && r.Requester_ID == s && r.End_Time >= DateTime.Now && !r.isWaitingList).OrderBy(r => r.Start_Time);
+                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Requester_ID == s && r.End_Time >= DateTime.Now && !r.isWaitingList).OrderBy(r => r.Start_Time);
                 return View(reservations.ToList());
             }
             catch(Exception e)
@@ -44,6 +44,7 @@ namespace VIP_Parking.Controllers
             return View();
         }
         // GET: Reservations/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -51,6 +52,26 @@ namespace VIP_Parking.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Reservation reservation = db.Reservations.Find(id);
+
+            //Make sure the reservation belongs to this user
+            if ((int)Session["userID"] != reservation.Requester_ID)
+                return HttpNotFound();
+
+            //Set variables for template status label
+            TempData["status"] = "Not Approved";
+            TempData["status_class"] = "red";
+
+            if (reservation.Approved == true)
+            {
+                TempData["status"] = "Approved!";
+                TempData["status_class"] = "green";
+
+                //Get permit id
+                var permit = db.Permits.Where(i => i.Reserv_ID == (int)id).SingleOrDefault();
+                if (permit != null)
+                    TempData["permitID"] = permit.PermitCode;
+            }
+
             if (reservation == null)
             {
                 return HttpNotFound();
@@ -59,13 +80,15 @@ namespace VIP_Parking.Controllers
         }
 
         // GET: Reservations/Create
-    
+        [Authorize]
         public ActionResult Create()
         {
+#if DEBUG
             Session["firstname"] = "Jason";
             Session["lastname"] = "Kirby";
             Session["email"] = "jason.kirby@cablelabs.com";
             Session["userID"] = 1;
+#endif
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title");
             ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", Session["Dept_ID"]);
             return View();
@@ -78,8 +101,11 @@ namespace VIP_Parking.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(ReservationVM reservation, string waiting_list)
         {
+            //Build Select Lists
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title", reservation.Category_ID);
             ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", reservation.Dept_ID);
+
+            //If the reservation form validates
             if (ModelState.IsValid)
             {
                 DateTime start_time, end_time;
@@ -125,6 +151,8 @@ namespace VIP_Parking.Controllers
                     ModelState.AddModelError("ErrorNumSlots", "You have exceeded the number of available spaces. The number of avaiable spaces is: " + (NumSlotsHelper.getSlotsInLot() - NumSlotsHelper.getSlotsTaken(start_time, end_time)) + ". You may check back later to see if any spaces have opened up. <button id='waiting_list' name='waiting_list' value='waiting_list' type='submit'>Place me on a waiting list</button> ");
                     return View(reservation);
                 }
+
+                //Create the reservation
                 Reservation r = new Reservation
                 {
                     Requester_ID = (int)Session["userID"],
@@ -140,6 +168,8 @@ namespace VIP_Parking.Controllers
                 };
                 if (event_id != 0)
                     r.Event_ID = event_id;
+
+                //If this is a waiting list request
                 if (waiting_list != null)
                     r.isWaitingList = true;
                 db.Reservations.Add(r);
@@ -190,6 +220,7 @@ namespace VIP_Parking.Controllers
         }
 
         // GET: Reservations/Edit/5
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -257,6 +288,7 @@ namespace VIP_Parking.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
 
         protected override void Dispose(bool disposing)
         {
