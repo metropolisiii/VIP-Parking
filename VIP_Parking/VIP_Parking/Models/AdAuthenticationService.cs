@@ -11,7 +11,7 @@ namespace ActiveDirectoryAuthentication.Models
 {
     public class AdAuthenticationService
     {
-        public class AuthenticationResult
+        public class AuthenticationResult;
         {
             public AuthenticationResult(string errorMessage = null)
             {
