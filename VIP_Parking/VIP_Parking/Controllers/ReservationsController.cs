@@ -25,7 +25,7 @@ namespace VIP_Parking.Controllers
             //Get this user's current reservations. Any reservations made in the past will not be displayed 
             try {
                 var s = (int)Session["userID"];
-                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Approved == true && r.Requester_ID == s && r.End_Time >= DateTime.Now && !r.isWaitingList).OrderBy(r => r.Start_Time);
+                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Requester_ID == s && r.End_Time >= DateTime.Now && !r.isWaitingList).OrderBy(r => r.Start_Time);
                 return View(reservations.ToList());
             }
             catch(Exception e)
@@ -44,6 +44,7 @@ namespace VIP_Parking.Controllers
             return View();
         }
         // GET: Reservations/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -51,6 +52,26 @@ namespace VIP_Parking.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Reservation reservation = db.Reservations.Find(id);
+
+            //Make sure the reservation belongs to this user
+            if ((int)Session["userID"] != reservation.Requester_ID)
+                return HttpNotFound();
+
+            //Set variables for template status label
+            TempData["status"] = "Not Approved";
+            TempData["status_class"] = "red";
+
+            if (reservation.Approved == true)
+            {
+                TempData["status"] = "Approved!";
+                TempData["status_class"] = "green";
+
+                //Get permit id
+                var permit = db.Permits.Where(i => i.Reserv_ID == (int)id).SingleOrDefault();
+                if (permit != null)
+                    TempData["permitID"] = permit.PermitCode;
+            }
+
             if (reservation == null)
             {
                 return HttpNotFound();
@@ -59,13 +80,15 @@ namespace VIP_Parking.Controllers
         }
 
         // GET: Reservations/Create
-    
+        [Authorize]
         public ActionResult Create()
         {
+#if DEBUG
             Session["firstname"] = "Jason";
             Session["lastname"] = "Kirby";
             Session["email"] = "jason.kirby@cablelabs.com";
             Session["userID"] = 1;
+#endif
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title");
             ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", Session["Dept_ID"]);
             return View();
@@ -197,6 +220,7 @@ namespace VIP_Parking.Controllers
         }
 
         // GET: Reservations/Edit/5
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -264,6 +288,7 @@ namespace VIP_Parking.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
 
         protected override void Dispose(bool disposing)
         {

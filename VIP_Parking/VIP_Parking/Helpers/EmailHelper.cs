@@ -9,7 +9,7 @@ namespace VIP_Parking.Helpers
 {
     public static class EmailHelper
     {
-        public static void SendEmail(string subject, string body, List<string> recipients)
+        public static void SendEmail(string subject, string body, List<string> recipients, string attachment="")
         {
             var message = new MailMessage();
             foreach (string r in recipients)
@@ -20,6 +20,8 @@ namespace VIP_Parking.Helpers
             message.Subject = subject;
             message.Body = body;
             message.IsBodyHtml = true;
+            if (attachment != "")
+                message.Attachments.Add(new Attachment(attachment));
             using (var client = new SmtpClient("smtp.gmail.com", 587))
             {
                 client.EnableSsl = true;
@@ -28,9 +30,9 @@ namespace VIP_Parking.Helpers
                 client.Send(message);
             }
         }
-        public static void SendEmail(string subject, string body, string recipient)
+        public static void SendEmail(string subject, string body, string recipient, string attachment="")
         {
-            SendEmail(subject, body, new List<string> { recipient });
+            SendEmail(subject, body, new List<string> { recipient }, attachment);
         }
     }
 }

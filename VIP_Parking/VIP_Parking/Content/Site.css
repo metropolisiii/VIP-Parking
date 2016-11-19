@@ -59,11 +59,24 @@ mark {
 .float-left {
     float: left;
 }
-
+.green {
+    color: green;
+}
+.red {
+    color: #ff0000;
+}
 .float-right {
     float: right;
 }
-
+.dl-horizontal dt {
+    width: 200px;
+}
+.dl-horizontal dd {
+    margin-left: 210px;
+}
+dl.dl-horizontal dt, dl.dl-horizontal dd {
+    margin-bottom: 8px;
+}
 .clear-fix:after {
     content: ".";
     clear: both;
