@@ -78,7 +78,7 @@ namespace VIP_Parking.Middleware
             sess.Session["username"] = "tuser";
             sess.Session["firstname"] = "Test";
             sess.Session["lastname"] = "User";
-            sess.Session["email"] = "test@test.com";
+            sess.Session["email"] = "jkirby1325@gmail.com";
             sess.Session["user_department"] = "IT";
             sess.Session["is_admin"] = false;
             return new AuthenticationResult();

@@ -4,14 +4,23 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<p>
+    @Html.ActionLink("Back to Reservations", "Index")
+</p>
 
 <div>
-    <h4>Reservation</h4>
+    <h2>Parking Reservation for @if (Model.Event != null) { Html.Display(Model.Event.Event_Name +" - ");} @Model.Start_Time.DayOfWeek, @Model.Start_Time.ToString("MMMM dd")</h2>
+    <p>Status: <span class="@TempData["status_class"]">@TempData["status"]</span></p>
+    @if (Model.Approved == true)
+    {
+        @Html.Raw("<p class='right'><a class='link_button purple' href='/Permits/Send/" + @TempData["permitID"] + "'>Lost my permit. Request another</a></p>");
+    }
+
+
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.RecipientName)
+            @Html.DisplayName("Guest Name")
         </dt>
 
         <dd>
@@ -19,15 +28,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.NumOfSlots)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.NumOfSlots)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.RecipientEmail)
+            @Html.DisplayName("Guest Email")
         </dt>
 
         <dd>
@@ -35,23 +36,7 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Start_Time)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Start_Time)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.End_Time)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.End_Time)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Category.Title)
+            @Html.DisplayName("VIP Category")
         </dt>
 
         <dd>
@@ -59,40 +44,54 @@
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Event.Event_ID)
+            @Html.DisplayName("Event")
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Event.Event_ID)
+            @Html.DisplayFor(model => model.Event.Event_Name)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.GateCode1.GateCode1)
+            @Html.DisplayName("Date of Visit")
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.GateCode1.GateCode1)
+           @Model.Start_Time.ToString("MM/dd/yyyy")
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.ParkingSpot.Location)
+            @Html.DisplayName("Time of Visit")
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.ParkingSpot.Location)
+            @Model.Start_Time.ToString("h:mm tt") - @Model.End_Time.ToString("h:mm tt")
+        </dd>
+
+
+        <dt>
+            @Html.DisplayName("Number of Spaces Requested")
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NumOfSlots)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Requester.Username)
+            @Html.DisplayName("Name of Requester")
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Requester.Username)
-        </dd>
+            @Html.DisplayFor(model => model.Requester.Firstname) @Html.DisplayFor(model => model.Requester.Lastname)
+        </dd> 
+        <dt>
+            @Html.DisplayName("Department")
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Department.Dept_name)
+        </dd> 
+       
 
     </dl>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Reserv_ID }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
