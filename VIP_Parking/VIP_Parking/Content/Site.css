@@ -77,6 +77,15 @@ mark {
 dl.dl-horizontal dt, dl.dl-horizontal dd {
     margin-bottom: 8px;
 }
+.reservation_info, .reservation_approved_status {
+    display: inline-block;
+}
+.reservation_approved_status {
+    font-weight: bold;
+}
+.gray {
+    color: #6a6a6a;
+}
 .clear-fix:after {
     content: ".";
     clear: both;
@@ -224,6 +233,7 @@ input[type="radio"] {
     position: absolute;
     right: 10px;
     top: 0;
+    text-align:right;
 }
 
 /* login

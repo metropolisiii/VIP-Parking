@@ -32,8 +32,9 @@ namespace VIP_Parking.Models.Database
         public System.DateTime Start_Time { get; set; }
         public System.DateTime End_Time { get; set; }
         public Nullable<int> Dept_ID { get; set; }
-        public bool Approved { get; set; }
+        public byte Approved { get; set; }
         public bool isWaitingList { get; set; }
+        public string RequesterEmail { get; set; }
     
         public virtual Category Category { get; set; }
         public virtual Department Department { get; set; }

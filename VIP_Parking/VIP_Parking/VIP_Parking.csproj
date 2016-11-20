@@ -255,6 +255,7 @@
     <Compile Include="Helpers\UserHelper.cs" />
     <Compile Include="LogExtensions.cs" />
     <Compile Include="Middleware\ActiveDirectoryAuthenticationService.cs" />
+    <Compile Include="Middleware\DatabaseAuthenticationService.cs" />
     <Compile Include="Middleware\WindowsAuthenticationService.cs" />
     <Compile Include="Models\Database\Category.cs">
       <DependentUpon>Model1.tt</DependentUpon>

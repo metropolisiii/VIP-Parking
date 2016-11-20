@@ -12,7 +12,7 @@ namespace VIP_Parking.Helpers
         public static int getSlotsTaken(DateTime start_time, DateTime end_time)
         {
             VIPPARKINGEntities1 db = new VIPPARKINGEntities1();
-            var slotsTaken = (from s in db.Reservations where s.Approved == true && ((s.Start_Time <= start_time && s.End_Time > start_time) || (s.Start_Time < end_time && s.End_Time >= end_time) || (s.Start_Time >= start_time && s.End_Time < end_time)) select (int?)s.NumOfSlots).Sum() ?? 0;
+            var slotsTaken = (from s in db.Reservations where s.Approved == 1 && ((s.Start_Time <= start_time && s.End_Time > start_time) || (s.Start_Time < end_time && s.End_Time >= end_time) || (s.Start_Time >= start_time && s.End_Time < end_time)) select (int?)s.NumOfSlots).Sum() ?? 0;
             return slotsTaken;
         }
         public static int getSlotsInLot()

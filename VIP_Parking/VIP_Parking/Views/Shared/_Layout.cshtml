@@ -30,6 +30,12 @@
                     {
                         <span>Welcome, @Session["firstname"]</span>
                         <span>@Html.ActionLink("Log out", "Logoff", "Login")</span>
+                        if ((bool)@Session["isAdmin"])
+                        {
+                            <div id="admin_nav_menu">
+                                [Stuff will eventually go here]
+                            </div>
+                        }
                     }
                 </div><!--.user_links-->
             </div>

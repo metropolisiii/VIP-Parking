@@ -4,11 +4,20 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Your Existing Reservations</h2>
-
+@if ((bool)Session["isAdmin"])
+{
+    <h2>Parking Reservation Admininstration</h2>
+}
+else {
+    <h2>Your Existing Reservations</h2>
+}
 <p class="right">
     @Html.ActionLink("New Reservation", "Create", new { controller = "Reservations" }, new { @class = "link_button purple" })
 </p>
+@if ((bool)Session["isAdmin"])
+{
+    <h3>Current Requests</h3>
+}
 <div class="table">
    @foreach (var item in Model) {
        var weekDay = item.Start_Time.DayOfWeek;
@@ -22,8 +31,21 @@
                     eventName = item.Event.Event_Name;
                 }
             }
-            @Html.ActionLink(eventName+" "+@weekDay+", "+item.Start_Time.ToString("MMMM dd - h:mmtt") + "-"+item.End_Time.ToString("h:mmtt"),"Details",new { id=item.Reserv_ID })
-        </div>
+            <span class="reservation_info">
+                @Html.ActionLink(eventName+" "+@weekDay+", "+item.Start_Time.ToString("MMMM dd - h:mmtt") + "-"+item.End_Time.ToString("h:mmtt"),"Details",new { id=item.Reserv_ID })
+            </span>           
+            <div class="reservation_approved_status">
+                @if (item.Approved == 1){
+                    <div class="green">Approved!</div>
+                }
+                else if (item.Approved == 2){
+                     <div class="red">Declined</div>   
+                }
+                else{
+                    <div class="gray">Processing</div>
+                }
+             </div>           
+          </div>
         <div class="table-column">
             @Html.ActionLink("Cancel","Delete",new { id=item.Reserv_ID }, new { @class="link_button white"})
         </div>

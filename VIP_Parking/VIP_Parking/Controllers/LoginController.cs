@@ -9,6 +9,7 @@ using System.Linq;
 using VIP_Parking.ViewModels;
 using VIP_Parking.Middeware;
 using VIP_Parking.Middleware;
+using System.Web.Security;
 
 namespace VIP_Parking.Controllers
 {
@@ -36,7 +37,7 @@ namespace VIP_Parking.Controllers
             // usually this will be injected via DI. but creating this manually now for brevity
             IAuthenticationManager authenticationManager = HttpContext.GetOwinContext().Authentication;
 #if DEBUG
-            var authService = new WindowsAuthenticationService(authenticationManager);
+            var authService = new DatabaseAuthenticationService(authenticationManager);
 #else
             var authService = new ActiveDirectoryAuthenticationService(authenticationManager);
 #endif
@@ -80,7 +81,8 @@ namespace VIP_Parking.Controllers
                         Firstname = (string)Session["firstname"],
                         Lastname = (string)Session["lastname"],
                         Dept_ID = deptID,
-                        Email = (string)Session["email"]
+                        Email = (string)Session["email"],
+                        Fullname = (string)Session["firstname"]+" "+(string)Session["lastname"]
                     };
                     db.Requesters.Add(requester);
                     db.SaveChanges();
@@ -94,7 +96,7 @@ namespace VIP_Parking.Controllers
                         requester.Lastname = (string)Session["lastname"];
                         requester.Dept_ID = deptID;
                         requester.Email = (string)Session["email"];
-
+                        requester.Fullname = (string)Session["firstname"] + " " + (string)Session["lastname"];
                         try
                         {
                             db.SaveChanges();
@@ -104,6 +106,7 @@ namespace VIP_Parking.Controllers
                             Console.WriteLine(e);
                         }
                         Session["userID"] = requester.Requester_ID;
+                        Session["isAdmin"] = requester.IsAdmin;
                     }
 
                 }
@@ -127,7 +130,8 @@ namespace VIP_Parking.Controllers
         {
             IAuthenticationManager authenticationManager = HttpContext.GetOwinContext().Authentication;
             authenticationManager.SignOut(MyAuthentication.ApplicationCookie);
-
+            FormsAuthentication.SignOut();
+            Session.Abandon();
             return RedirectToAction("Index");
         }
     }

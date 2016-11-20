@@ -73,6 +73,7 @@
           <Property Name="Dept_ID" Type="int" />
           <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="IsAdmin" Type="bit" Nullable="false" />
+          <Property Name="Fullname" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Reservation">
           <Key>
@@ -90,8 +91,9 @@
           <Property Name="Start_Time" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="End_Time" Type="datetime2" Precision="7" Nullable="false" />
           <Property Name="Dept_ID" Type="int" />
-          <Property Name="Approved" Type="bit" Nullable="false" />
+          <Property Name="Approved" Type="tinyint" Nullable="false" />
           <Property Name="isWaitingList" Type="bit" Nullable="false" />
+          <Property Name="RequesterEmail" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <Association Name="FK_ParkingSpot_Lot">
           <End Role="Lot" Type="Self.Lot" Multiplicity="1" />
@@ -331,6 +333,7 @@
           <NavigationProperty Name="Department" Relationship="Self.FK_Requester_Department" FromRole="Requester" ToRole="Department" />
           <NavigationProperty Name="Reservations" Relationship="Self.FK_Reservation_Requester" FromRole="Requester" ToRole="Reservation" />
           <Property Name="IsAdmin" Type="Boolean" Nullable="false" />
+          <Property Name="Fullname" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Reservation">
           <Key>
@@ -348,7 +351,7 @@
           <Property Name="Start_Time" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="End_Time" Type="DateTime" Nullable="false" Precision="7" />
           <Property Name="Dept_ID" Type="Int32" />
-          <Property Name="Approved" Type="Boolean" Nullable="false" />
+          <Property Name="Approved" Type="Byte" Nullable="false" />
           <NavigationProperty Name="Category" Relationship="Self.FK_Reservation_Category" FromRole="Reservation" ToRole="Category" />
           <NavigationProperty Name="Department" Relationship="Self.FK_Reservation_Department" FromRole="Reservation" ToRole="Department" />
           <NavigationProperty Name="Event" Relationship="Self.FK_Reservation_Events" FromRole="Reservation" ToRole="Events" />
@@ -357,6 +360,7 @@
           <NavigationProperty Name="Permits" Relationship="Self.FK_Permit_Reservation" FromRole="Reservation" ToRole="Permit" />
           <NavigationProperty Name="Requester" Relationship="Self.FK_Reservation_Requester" FromRole="Reservation" ToRole="Requester" />
           <Property Name="isWaitingList" Type="Boolean" Nullable="false" />
+          <Property Name="RequesterEmail" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
         </EntityType>
         <Association Name="FK_Reservation_Category">
           <End Role="Category" Type="Self.Category" Multiplicity="0..1" />
@@ -585,6 +589,7 @@
           <EntitySetMapping Name="Requesters">
             <EntityTypeMapping TypeName="VIPPARKINGModel.Requester">
               <MappingFragment StoreEntitySet="Requester">
+                <ScalarProperty Name="Fullname" ColumnName="Fullname" />
                 <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
                 <ScalarProperty Name="Requester_ID" ColumnName="Requester_ID" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
@@ -599,6 +604,7 @@
           <EntitySetMapping Name="Reservations">
             <EntityTypeMapping TypeName="VIPPARKINGModel.Reservation">
               <MappingFragment StoreEntitySet="Reservation">
+                <ScalarProperty Name="RequesterEmail" ColumnName="RequesterEmail" />
                 <ScalarProperty Name="isWaitingList" ColumnName="isWaitingList" />
                 <ScalarProperty Name="Reserv_ID" ColumnName="Reserv_ID" />
                 <ScalarProperty Name="Requester_ID" ColumnName="Requester_ID" />
