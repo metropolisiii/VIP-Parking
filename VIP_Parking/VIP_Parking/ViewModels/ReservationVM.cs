@@ -30,7 +30,10 @@ namespace VIP_Parking.ViewModels
         [Required(ErrorMessage = "At least 1 space is needed")]
         [Range(1, Int32.MaxValue, ErrorMessage = "Value not within a valid range")]
         public int NumOfSlots { get; set; }
-        
+        public int Requester_ID { get; set; }
+        [Required]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+        public string Requester_Email { get; set; }
         public Nullable<int> Dept_ID { get; set; }
     }
 }

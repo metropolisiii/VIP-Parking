@@ -25,7 +25,12 @@ namespace VIP_Parking.Controllers
             //Get this user's current reservations. Any reservations made in the past will not be displayed 
             try {
                 var s = (int)Session["userID"];
-                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Requester_ID == s && r.End_Time >= DateTime.Now && !r.isWaitingList).OrderBy(r => r.Start_Time);
+                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Start_Time >= DateTime.Now && !r.isWaitingList).OrderBy(r => r.Approved).ThenBy(r => r.Start_Time);
+
+                if (!(bool)Session["isAdmin"]) //Admins get listing of all reservations. Requesters only see their requests.
+                {
+                    reservations = (IOrderedQueryable<Reservation>)reservations.Where(r => r.Requester_ID == s);
+                }
                 return View(reservations.ToList());
             }
             catch(Exception e)
@@ -54,14 +59,14 @@ namespace VIP_Parking.Controllers
             Reservation reservation = db.Reservations.Find(id);
 
             //Make sure the reservation belongs to this user
-            if ((int)Session["userID"] != reservation.Requester_ID)
+            if ((int)Session["userID"] != reservation.Requester_ID && (bool)Session["isAdmin"] != true)
                 return HttpNotFound();
 
             //Set variables for template status label
             TempData["status"] = "Not Approved";
             TempData["status_class"] = "red";
 
-            if (reservation.Approved == true)
+            if (reservation.Approved == 1)
             {
                 TempData["status"] = "Approved!";
                 TempData["status_class"] = "green";
@@ -91,6 +96,7 @@ namespace VIP_Parking.Controllers
 #endif
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title");
             ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", Session["Dept_ID"]);
+            ViewBag.Requester_ID = new SelectList(db.Requesters.OrderBy(x => x.Firstname), "Requester_ID", "Fullname", Session["userID"]);
             return View();
         }
 
@@ -104,6 +110,7 @@ namespace VIP_Parking.Controllers
             //Build Select Lists
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title", reservation.Category_ID);
             ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", reservation.Dept_ID);
+            ViewBag.Requester_ID = new SelectList(db.Requesters.OrderBy(x => x.Firstname), "Requester_ID", "Fullname", reservation.Requester_ID);
 
             //If the reservation form validates
             if (ModelState.IsValid)
@@ -155,7 +162,7 @@ namespace VIP_Parking.Controllers
                 //Create the reservation
                 Reservation r = new Reservation
                 {
-                    Requester_ID = (int)Session["userID"],
+                    Requester_ID = reservation.Requester_ID,
                     RecipientName = reservation.RecipientName,
                     RecipientEmail = reservation.RecipientEmail,
                     NumOfSlots = reservation.NumOfSlots,
@@ -164,7 +171,8 @@ namespace VIP_Parking.Controllers
                     Start_Time = start_time,
                     End_Time = end_time,
                     Dept_ID = reservation.Dept_ID,
-                    Approved = false
+                    Approved = 0,
+                    RequesterEmail = reservation.Requester_Email
                 };
                 if (event_id != 0)
                     r.Event_ID = event_id;
@@ -220,7 +228,7 @@ namespace VIP_Parking.Controllers
         }
 
         // GET: Reservations/Edit/5
-        [Authorize(Roles = "Administrator")]
+        [Authorize]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -232,6 +240,9 @@ namespace VIP_Parking.Controllers
             {
                 return HttpNotFound();
             }
+            //Make sure the reservation belongs to this user
+            if ((int)Session["userID"] != reservation.Requester_ID && (bool)Session["isAdmin"] != true)
+                return HttpNotFound();
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title", reservation.Category_ID);
             ViewBag.Event_ID = new SelectList(db.Events, "Event_ID", "Event_ID", reservation.Event_ID);
             ViewBag.GateCode = new SelectList(db.GateCodes, "GateCode1", "GateCode1", reservation.GateCode);
@@ -275,6 +286,9 @@ namespace VIP_Parking.Controllers
             {
                 return HttpNotFound();
             }
+            //Make sure the reservation belongs to this user
+            if ((int)Session["userID"] != reservation.Requester_ID && (bool)Session["isAdmin"] != true)
+                return HttpNotFound();
             return View(reservation);
         }
 
@@ -284,6 +298,9 @@ namespace VIP_Parking.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Reservation reservation = db.Reservations.Find(id);
+            //Make sure the reservation belongs to this user
+            if ((int)Session["userID"] != reservation.Requester_ID && (bool)Session["isAdmin"] != true)
+                return HttpNotFound();
             db.Reservations.Remove(reservation);
             db.SaveChanges();
             return RedirectToAction("Index");

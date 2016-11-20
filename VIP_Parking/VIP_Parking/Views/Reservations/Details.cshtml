@@ -11,7 +11,7 @@
 <div>
     <h2>Parking Reservation for @if (Model.Event != null) { Html.Display(Model.Event.Event_Name +" - ");} @Model.Start_Time.DayOfWeek, @Model.Start_Time.ToString("MMMM dd")</h2>
     <p>Status: <span class="@TempData["status_class"]">@TempData["status"]</span></p>
-    @if (Model.Approved == true)
+    @if (Model.Approved == 1)
     {
         @Html.Raw("<p class='right'><a class='link_button purple' href='/Permits/Send/" + @TempData["permitID"] + "'>Lost my permit. Request another</a></p>");
     }
@@ -83,8 +83,18 @@
         <dd>
             @Html.DisplayFor(model => model.Requester.Firstname) @Html.DisplayFor(model => model.Requester.Lastname)
         </dd> 
+
         <dt>
-            @Html.DisplayName("Department")
+            @Html.DisplayName("Requester's Email")
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RequesterEmail)
+        </dd> 
+
+
+        <dt>
+            @Html.DisplayName("Sponsoring Department")
         </dt>
 
         <dd>

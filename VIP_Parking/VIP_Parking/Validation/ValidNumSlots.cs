@@ -24,7 +24,7 @@ namespace VIPParking.ValidationAttributes
 
                 DateTime end_time = DateTime.ParseExact(end_temp, "yyyy-MM-dd h:mm tt", null);
                 DateTime start_time = DateTime.ParseExact(start_temp, "yyyy-MM-dd h:mm tt", null);
-                var slotsTaken = (from s in db.Reservations where s.Approved == true && ((s.Start_Time <= start_time && s.End_Time > start_time) || (s.Start_Time < end_time && s.End_Time >= end_time) || (s.Start_Time >= start_time && s.End_Time < end_time )) select (int?)s.NumOfSlots).Sum() ?? 0;
+                var slotsTaken = (from s in db.Reservations where s.Approved == 1 && ((s.Start_Time <= start_time && s.End_Time > start_time) || (s.Start_Time < end_time && s.End_Time >= end_time) || (s.Start_Time >= start_time && s.End_Time < end_time )) select (int?)s.NumOfSlots).Sum() ?? 0;
                 if (Convert.ToInt32(value) > slotsInLot.Lot_Spaces_Available - slotsTaken)
                 {
                     return new ValidationResult("You have exceeded the number of available spaces. The number of avaiable spaces is: " + (slotsInLot.Lot_Spaces_Available - slotsTaken)+". You may check back later to see if any spaces have opened up. <button id='waiting_list' name='waiting_list' value='waiting_list' type='submit'>Place me on a waiting list</button> ");
