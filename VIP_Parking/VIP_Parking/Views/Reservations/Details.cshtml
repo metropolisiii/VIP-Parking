@@ -100,8 +100,10 @@
         <dd>
             @Html.DisplayFor(model => model.Department.Dept_name)
         </dd> 
-       
-
     </dl>
+    @if ((bool)Session["isAdmin"])
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Reserv_ID })
+    }
 </div>
 

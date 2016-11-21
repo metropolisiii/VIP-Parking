@@ -428,6 +428,7 @@
     <Content Include="Views\Permits\Edit.cshtml" />
     <Content Include="Views\Permits\Index.cshtml" />
     <Content Include="Views\Permits\Send.cshtml" />
+    <Content Include="Views\Reservations\_Form.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
