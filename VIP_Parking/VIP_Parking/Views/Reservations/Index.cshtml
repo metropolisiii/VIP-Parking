@@ -47,6 +47,10 @@ else {
              </div>           
           </div>
         <div class="table-column">
+            @if ((bool)Session["isAdmin"])
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = item.Reserv_ID }, new { @class = "link_button white" })
+            }
             @Html.ActionLink("Cancel","Delete",new { id=item.Reserv_ID }, new { @class="link_button white"})
         </div>
     </div>

@@ -28,11 +28,11 @@ namespace VIP_Parking.Helpers
             //Select the number slots iavailable for the lot and get the number of slots already taken. If the value of spaces is greater this, throw a validation exception.
            
             var model = reservation;
-            start_temp = model.Date.ToString("yyyy-MM-dd") + " " + model.Start_Time + " " + model.Start_Ampm;
-            end_temp = model.Date.ToString("yyyy-MM-dd") + " " + model.End_Time + " " + model.End_Ampm;
+            start_temp = model.Date + " " + model.Start_Time + " " + model.Start_Ampm;
+            end_temp = model.Date + " " + model.End_Time + " " + model.End_Ampm;
 
-            DateTime end_time = DateTime.ParseExact(end_temp, "yyyy-MM-dd h:mm tt", null);
-            DateTime start_time = DateTime.ParseExact(start_temp, "yyyy-MM-dd h:mm tt", null);
+            DateTime end_time = DateTime.ParseExact(end_temp, "MM/dd/yyyy h:mm tt", null);
+            DateTime start_time = DateTime.ParseExact(start_temp, "MM/dd/yyyy h:mm tt", null);
             
             if (Convert.ToInt32(reservation.NumOfSlots) > getSlotsInLot() - getSlotsTaken(start_time, end_time))
             {

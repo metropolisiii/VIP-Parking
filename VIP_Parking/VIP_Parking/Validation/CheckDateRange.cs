@@ -10,7 +10,7 @@ namespace VIPParking.ValidationAttributes
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            DateTime dt = (DateTime)value;
+            DateTime dt = DateTime.ParseExact((string)value,"MM/dd/yyyy", null);
             if (dt.AddDays(1) < DateTime.UtcNow)
             {
                 return new ValidationResult("Please enter a date greater than or equal to today");
