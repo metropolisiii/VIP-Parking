@@ -5,4 +5,9 @@
         buttonImageOnly: true,
         minDate: 0
     });
+    $("#decline").click(function () {
+        var c = confirm("Are you sure you want to decline this reservation?");
+        if (!c)
+            return false;
+    });
 });
