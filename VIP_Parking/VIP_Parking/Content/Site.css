@@ -68,6 +68,18 @@ mark {
 .float-right {
     float: right;
 }
+button.green {
+    background: green none repeat scroll 0 0;
+    color: white;
+}
+button.red {
+    background: #ff0000 none repeat scroll 0 0;
+    color: white;
+}
+button.yellow {
+    background: yellow none repeat scroll 0 0;
+    color: #000;
+}
 .dl-horizontal dt {
     width: 200px;
 }
