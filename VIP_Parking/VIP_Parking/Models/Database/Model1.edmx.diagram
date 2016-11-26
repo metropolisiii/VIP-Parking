@@ -4,15 +4,15 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="ecb50ac168fa46c3a6a0f0dc732fc50d" Name="Diagram1">
-        <EntityTypeShape EntityType="VIPPARKINGModel.Category" Width="1.5" PointX="3" PointY="5.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="VIPPARKINGModel.Department" Width="1.5" PointX="0.75" PointY="2.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="VIPPARKINGModel.Event" Width="1.5" PointX="3" PointY="8.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="VIPPARKINGModel.GateCode" Width="1.5" PointX="3" PointY="11.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="VIPPARKINGModel.Lot" Width="1.5" PointX="0.75" PointY="13.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="VIPPARKINGModel.ParkingSpot" Width="1.5" PointX="3" PointY="13.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="VIPPARKINGModel.Permit" Width="1.5" PointX="7.5" PointY="2.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="VIPPARKINGModel.Requester" Width="1.5" PointX="3" PointY="2.125" IsExpanded="true" />
+      <Diagram DiagramId="ae1bcd94da5e4798b3f14e732c967446" Name="Diagram1">
+        <EntityTypeShape EntityType="VIPPARKINGModel.Category" Width="1.5" PointX="3" PointY="6.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="VIPPARKINGModel.Department" Width="1.5" PointX="3" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="VIPPARKINGModel.Event" Width="1.5" PointX="3" PointY="11" IsExpanded="true" />
+        <EntityTypeShape EntityType="VIPPARKINGModel.GateCode" Width="1.5" PointX="3" PointY="14" IsExpanded="true" />
+        <EntityTypeShape EntityType="VIPPARKINGModel.Lot" Width="1.5" PointX="0.75" PointY="2.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="VIPPARKINGModel.ParkingSpot" Width="1.5" PointX="3" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="VIPPARKINGModel.Permit" Width="1.5" PointX="7.5" PointY="3" IsExpanded="true" />
+        <EntityTypeShape EntityType="VIPPARKINGModel.Requester" Width="1.5" PointX="3" PointY="16.5" IsExpanded="true" />
         <EntityTypeShape EntityType="VIPPARKINGModel.Reservation" Width="1.5" PointX="5.25" PointY="1.125" IsExpanded="true" />
         <AssociationConnector Association="VIPPARKINGModel.FK_Reservation_Category" ManuallyRouted="false" />
         <AssociationConnector Association="VIPPARKINGModel.FK_Requester_Department" ManuallyRouted="false" />
@@ -23,6 +23,7 @@
         <AssociationConnector Association="VIPPARKINGModel.FK_Reservation_ParkingSpot" ManuallyRouted="false" />
         <AssociationConnector Association="VIPPARKINGModel.FK_Permit_Reservation" ManuallyRouted="false" />
         <AssociationConnector Association="VIPPARKINGModel.FK_Reservation_Requester" ManuallyRouted="false" />
+        <AssociationConnector Association="VIPPARKINGModel.AllowedLots" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

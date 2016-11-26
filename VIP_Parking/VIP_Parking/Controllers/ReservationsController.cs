@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using VIP_Parking.Models.Database;
 using VIP_Parking.ViewModels;
 using VIP_Parking.Helpers;
+using System.IO;
 
 namespace VIP_Parking.Controllers
 {
@@ -38,22 +39,31 @@ namespace VIP_Parking.Controllers
                 return RedirectToAction("Logoff", "Login");
             }
       }
-        public ActionResult Success(string status)
+        public ActionResult Success(string status, string reserv_id)
         {
+            //Get the reservation
+            var res = db.Reservations.Find(Convert.ToInt32(reserv_id));
+            ReservationVM reservation = ViewModelFromReservation(res);
             string message = "";
+            string event_info = "";
+            if (reservation.Event != null)
+                event_info = event_info + reservation.Event+" ";
+            event_info = event_info + reservation.Date + " " + reservation.Start_Time + reservation.Start_Ampm + " - " + reservation.End_Time + reservation.End_Ampm;
             switch (status)
             {
                 case "waiting list":
-                    message = "<p>Thank you for adding your parking lot request to the waiting list</p><p>We will review your request and if spaces open up, you may be eligible for parking at your requested times. If this is the case, we will be notifying you via the email address of your account.</p>";
+                    message = "<p>Thank you for adding your parking lot request for "+event_info+" to the waiting list</p><p>We will review your request and if spaces open up, you may be eligible for parking at your requested times. If this is the case, we will be notifying you via the email address of your account.</p>";
                     break;
                 case "request":
-                    message = "<p>Thank you for submitting a parking reservation request.</p><p>Your request will be reviewed and you should be receiving an email within the next few days.</p><p>If your request is approved, you'll receive a parking permit as an attachment in your email.</p>";
+                    message = "<p>Thank you for submitting a parking reservation request.</p><p>Your request for "+event_info+" will be reviewed and you should be receiving an email within the next few days.</p><p>If your request is approved, you'll receive a parking permit as an attachment in your email.</p>";
                     break;
                 case "decline":
-                    message = "<p>This reservation has been declined.</p>";
+                    message = "<p>This reservation for "+event_info+" has been declined. The requester will be notified of this status.</p>";
+                    break;
+                case "approved":
+                    message = "<p>This reservation for " + event_info + " has been approved! The requester will be notified of this status and will be sent "+reservation.NumOfSlots+" permit(s) and a gate code of "+reservation.GateCode+".";
                     break;
                 default:
-                    message = "";
                     break;
             }
             ViewData["message"] = message;
@@ -95,7 +105,7 @@ namespace VIP_Parking.Controllers
             return View(reservation);
         }
 
-        private void UpdateReservation(Reservation reservation, ReservationVM viewModel, string waiting_list, byte Approve=0)
+        private int UpdateReservation(Reservation reservation, ReservationVM viewModel, string waiting_list, byte Approve=0)
         {
             bool update = false;
             if (reservation.Reserv_ID != 0)
@@ -105,8 +115,10 @@ namespace VIP_Parking.Controllers
             int event_id = 0;
             int gatecode = 0;
             DateTime start_time, end_time;
-
-            reservation.Requester_ID = viewModel.Requester_ID;
+            if (viewModel.Requester_ID == 0)
+                reservation.Requester_ID = (int)Session["userID"];
+            else
+                reservation.Requester_ID = viewModel.Requester_ID;
             reservation.RecipientName = viewModel.RecipientName;
             reservation.NumOfSlots = viewModel.NumOfSlots;
             reservation.RecipientEmail = viewModel.RecipientEmail;
@@ -137,6 +149,8 @@ namespace VIP_Parking.Controllers
                 var g = db.GateCodes.Where(i => i.StartDate <= date && i.EndDate >= date).SingleOrDefault();
                 if (g != null)
                     gatecode = g.GateCode1;
+                else
+                    gatecode = 0;
             }
             else
                 gatecode = viewModel.GateCode;
@@ -185,6 +199,7 @@ namespace VIP_Parking.Controllers
                     throw new DbEntityValidationException(exceptionMessage, ex.EntityValidationErrors);
                 }
             }
+            return reservation.Reserv_ID;
         }
 
         // GET: Reservations/Create
@@ -219,7 +234,7 @@ namespace VIP_Parking.Controllers
             if (ModelState.IsValid)
             {
                 var r = new Reservation();
-                UpdateReservation(r, reservation, waiting_list);
+                int reserv_ID = UpdateReservation(r, reservation, waiting_list);
 
                 //Email administrators notification to administrator notifying him or her that someone has placed a reservation request
                 //Get administrators
@@ -235,12 +250,12 @@ namespace VIP_Parking.Controllers
 
                     //Email requestor notifying him or her that a reservation has been made and needs reviewing
                     EmailHelper.SendEmail("Comfirmation for Regis Parking Lot Reservation", Session["firstname"] + ",<br/><br/>You are receiving this email to verify that we have received your submission for a parking request for " + reservation.NumOfSlots + " spaces on " + reservation.Date + ". Please give us 24 hours to review your reservation to determine if we will be able to accommodate your request.<br/><br/>Sincerely, <br/>Regis Parking Administration", (string)Session["email"]);
-                    return RedirectToAction("Success", new { status = "request" });
+                    return RedirectToAction("Success", new { status = "request", reserv_id = reserv_ID });
                 }
                 else {
                     //If the user placed himself on a waiting list, email the administrator
                     EmailHelper.SendEmail("Someone Was Placed on the Regis Parking Waiting List", Session["firstname"] + " " + Session["lastname"] + " has submitted a request for " + reservation.NumOfSlots + " spaces on " + reservation.Date + "between "+reservation.Start_Time+reservation.Start_Time+" and "+reservation.End_Time+reservation.End_Ampm+". Currently, the lot is full at this time and the requester has chosen to be placed on the waiting list. You may log into the Regis Parking Reservation system at <a href='http://parking.regis.edu/admin'>http://parking.regis.edu/admin</a> to review this reservation.", recipients);
-                    return RedirectToAction("Success",new {status = "waiting list" });
+                    return RedirectToAction("Success",new {status = "waiting list", reserv_id = reserv_ID });
                 }
                 
             }
@@ -286,13 +301,14 @@ namespace VIP_Parking.Controllers
             {
                 return HttpNotFound();
             }
-            //Make sure the reservation belongs to this user
-            if ((int)Session["userID"] != reservation.Requester_ID && (bool)Session["isAdmin"] != true)
+            //Make sure the admin is editing
+            if ((bool)Session["isAdmin"] != true)
                 return HttpNotFound();
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title", reservation.Category_ID);
             ViewBag.Event_ID = new SelectList(db.Events, "Event_ID", "Event_ID", reservation.Event_ID);
             ViewBag.Requester_ID = new SelectList(db.Requesters, "Requester_ID", "Username", reservation.Requester_ID);
             ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", reservation.Dept_ID);
+            ViewBag.Lots = LotsHelper.PopulateAllowedLotsData(reservation);
             return View(ViewModelFromReservation(reservation));
         }
 
@@ -302,29 +318,77 @@ namespace VIP_Parking.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Reserv_ID,RecipientName,RecipientEmail,Category_ID,Event,Date,Start_Time,Start_Ampm,End_Time,End_Ampm,NumOfSlots,Requester_ID,Requester_Email,Dept_ID,GateCode,Approved")] ReservationVM reservation, string waiting_list, string Approve)
+        public ActionResult Edit([Bind(Include = "Reserv_ID,RecipientName,RecipientEmail,Category_ID,Event,Date,Start_Time,Start_Ampm,End_Time,End_Ampm,NumOfSlots,Requester_ID,Requester_Email,Dept_ID,GateCode,Approved")] ReservationVM reservation, string waiting_list, string Approve, string[] selectedLots)
         {
-            //Make sure the reservation belongs to this user
-            if ((int)Session["userID"] != reservation.Requester_ID && (bool)Session["isAdmin"] != true)
+            //Make sure the the admin is editing
+            if ((bool)Session["isAdmin"] != true)
                 return HttpNotFound();
+            var existingReservation = db.Reservations.Find(reservation.Reserv_ID);
             if (ModelState.IsValid)
             {
-                byte a = 0;
-                if (Approve == "1")
-                    a = 1;
-                else if (Approve == "2")
-                    a = 2;
-                var existingReservation = db.Reservations.Find(reservation.Reserv_ID);
-                UpdateReservation(existingReservation, reservation, waiting_list, a);
-                db.SaveChanges();
-                if (a == 2) //Reservation was declined
+                int a = Convert.ToInt32(Approve);
+
+                if (a != 0)
                 {
-                    //Send email to requester to notify that reservation was declined
-                    string event_name = "";
-                    if (reservation.Event != null)
-                        event_name = reservation.Event;
-                    EmailHelper.SendEmail("Reservation for Regis VIP Parking was Declined", reservation.RecipientName+",<br/><br/>You are receiving this email to notify you that your reservation for "+event_name+" "+reservation.Date+" "+reservation.Start_Time+reservation.Start_Ampm+" - "+reservation.End_Time+reservation.End_Ampm+" was declined. If you have any questions, you may contact <a href='mailto:ruparking@regis.edu'>ruparking@regis.edu.</a><br/><br/>Regis Parking Administration" , reservation.Requester_Email);
-                    return RedirectToAction("Success", new { status = "decline" });
+                    UpdateReservation(existingReservation, reservation, waiting_list, (byte)a);
+                    UpdateReservationLots(selectedLots, existingReservation);
+                    db.SaveChanges();
+                }
+                string event_name = "";
+                if (reservation.Event != null)
+                    event_name = reservation.Event;
+                switch (a)
+                {
+                    case 0: //Reservation was cancelled
+                        return RedirectToAction("Delete", new { id = reservation.Reserv_ID });
+                    case 1: //Reservation was approved
+                        List<string> attachments = new List<string>();
+                        //Create permits for each parking space
+                        for (int i=0; i<reservation.NumOfSlots; i++)
+                        {
+                            int permit_number = 1000;
+                            var permit_number_query = db.Permits.OrderByDescending(p => p.PermitCode).FirstOrDefault();
+                            if (permit_number_query != null)
+                                permit_number = permit_number_query.PermitCode + 1;
+                            Permit permit = new Permit { PermitCode = permit_number, Reserv_ID = reservation.Reserv_ID };
+                            db.Permits.Add(permit);
+                            db.SaveChanges();
+                            QRCodeHelper.GenerateRelayQrCode(permit_number);
+                            attachments.Add(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "files/") + "qrcode_" + permit_number + ".gif");
+                        }
+                        //Send email to administrator and requester to notify that reservation was approved
+                        //Get email recipients
+                        var admin_results = db.Requesters.Where(i => i.IsAdmin == true);
+                        List<string> recipients = new List<string>();
+                        foreach (var rec in admin_results)
+                        {
+                            recipients.Add(rec.Email);
+                        }
+                        recipients.Add(reservation.Requester_Email);
+                        string message = reservation.RecipientName + ",<br/><br/>You are receiving this email to notify you that your reservation for " + event_name + " " + reservation.Date + " " + reservation.Start_Time + reservation.Start_Ampm + " - " + reservation.End_Time + reservation.End_Ampm + " was approved. Attached to this email is a parking permit for each parking space that you requested. <br/><br/>The gate code for this parking lot is <b>" + reservation.GateCode + "</b>.<br/><br/>";
+
+                        var lots = LotsHelper.PopulateAllowedLotsData(existingReservation);
+                        if (lots != null)
+                        {
+                            message = message + "The following lots are available for parking: <br/>";
+                            foreach (var lot in lots)
+                            {
+                                if (lot.Allowed)
+                                    message = message + lot.Lot_Name + "<br/>";
+                            }
+                            message = message + "<br/><br/>";
+                        }
+                        message = message + "If you have any questions, you may contact < a href = 'mailto:ruparking@regis.edu' > ruparking@regis.edu.</ a >< br />< br /> Regis Parking Administration";
+                        EmailHelper.SendEmail("Reservation for Regis VIP Parking was Approved!", message, recipients, attachments);
+
+                        return RedirectToAction("Success", new { status = "approved", reserv_id = reservation.Reserv_ID });                       
+                    case 2: //Reservation was declined
+                        //Remove any permits from the database
+                        db.Permits.RemoveRange(db.Permits.Where(p => p.Reserv_ID == reservation.Reserv_ID));
+                        db.SaveChanges();
+                        //Send email to requester to notify that reservation was declined
+                        EmailHelper.SendEmail("Reservation for Regis VIP Parking was Declined", reservation.RecipientName + ",<br/><br/>You are receiving this email to notify you that your reservation for " + event_name + " " + reservation.Date + " " + reservation.Start_Time + reservation.Start_Ampm + " - " + reservation.End_Time + reservation.End_Ampm + " was declined. If you have any questions, you may contact <a href='mailto:ruparking@regis.edu'>ruparking@regis.edu.</a><br/><br/>Regis Parking Administration", reservation.Requester_Email);
+                        return RedirectToAction("Success", new { status = "decline", reserv_id = reservation.Reserv_ID});                        
                 }
                 return RedirectToAction("Index");
             }
@@ -333,6 +397,7 @@ namespace VIP_Parking.Controllers
             ViewBag.GateCode = new SelectList(db.GateCodes, "GateCode1", "GateCode1", reservation.GateCode);
             ViewBag.Requester_ID = new SelectList(db.Requesters, "Requester_ID", "Username", reservation.Requester_ID);
             ViewBag.Dept_ID = new SelectList(db.Departments, "Dept_ID", "Dept_name", reservation.Dept_ID);
+            ViewBag.Lots = LotsHelper.PopulateAllowedLotsData(existingReservation);
             return View(reservation);
         }
 
@@ -368,7 +433,35 @@ namespace VIP_Parking.Controllers
             return RedirectToAction("Index");
         }
 
+        private void UpdateReservationLots(string[] selectedLots, Reservation reservation)
+        {
+            if (selectedLots == null)
+            {
+                reservation.Lots = new List<Lot>();
+                return;
+            }
 
+            var selectedLotsHS = new HashSet<string>(selectedLots);
+            var reservationLots = new HashSet<int>
+                (reservation.Lots.Select(l => l.Lot_ID));
+            foreach (var lot in db.Lots)
+            {
+                if (selectedLotsHS.Contains(lot.Lot_ID.ToString()))
+                {
+                    if (!reservationLots.Contains(lot.Lot_ID))
+                    {
+                        reservation.Lots.Add(lot);
+                    }
+                }
+                else
+                {
+                    if (reservationLots.Contains(lot.Lot_ID))
+                    {
+                        reservation.Lots.Remove(lot);
+                    }
+                }
+            }
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

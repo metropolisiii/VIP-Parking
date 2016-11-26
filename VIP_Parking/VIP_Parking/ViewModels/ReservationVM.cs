@@ -39,5 +39,6 @@ namespace VIP_Parking.ViewModels
         public Nullable<int> Dept_ID { get; set; }
         public int GateCode { get; set; }
         public byte Approved { get; set; }
+        public IEnumerable<LotVM> Lots { get; set; }
     }
 }

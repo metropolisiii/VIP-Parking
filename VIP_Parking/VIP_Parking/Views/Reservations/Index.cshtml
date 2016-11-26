@@ -32,7 +32,15 @@ else {
                 }
             }
             <span class="reservation_info">
-                @Html.ActionLink(eventName+" "+@weekDay+", "+item.Start_Time.ToString("MMMM dd - h:mmtt") + "-"+item.End_Time.ToString("h:mmtt"),"Details",new { id=item.Reserv_ID })
+                @if ((bool)Session["isAdmin"])
+                {
+                    @Html.ActionLink(eventName + " " + @weekDay + ", " + item.Start_Time.ToString("MMMM dd - h:mmtt") + "-" + item.End_Time.ToString("h:mmtt"), "Edit", new { id = item.Reserv_ID })
+                }
+                else
+                {
+                    @Html.ActionLink(eventName + " " + @weekDay + ", " + item.Start_Time.ToString("MMMM dd - h:mmtt") + "-" + item.End_Time.ToString("h:mmtt"), "Details", new { id = item.Reserv_ID })
+                }
+
             </span>           
             <div class="reservation_approved_status">
                 @if (item.Approved == 1){
