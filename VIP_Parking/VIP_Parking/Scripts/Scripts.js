@@ -10,4 +10,10 @@
         if (!c)
             return false;
     });
+    $("#approve").click(function () {
+        var c = confirm("Are you sure you want to approve this reservation?");
+        if (!c)
+            return false;
+    });
+    
 });

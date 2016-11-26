@@ -18,6 +18,7 @@ namespace VIP_Parking.Models.Database
         public Reservation()
         {
             this.Permits = new HashSet<Permit>();
+            this.Lots = new HashSet<Lot>();
         }
     
         public int Reserv_ID { get; set; }
@@ -44,5 +45,7 @@ namespace VIP_Parking.Models.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Permit> Permits { get; set; }
         public virtual Requester Requester { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Lot> Lots { get; set; }
     }
 }
