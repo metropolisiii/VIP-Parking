@@ -95,7 +95,7 @@
 <div class="form-group">
     @Html.Label("requester-email", "Requester Email *", htmlAttributes: new { @class = "control-label col-md-4" })
     <div class="col-md-6">
-        @Html.EditorFor(model => model.Requester_Email, new { htmlAttributes = new { @class = "form-control", @Value = Session["email"] } })
+        @Html.EditorFor(model => model.Requester_Email, new { htmlAttributes = new { @class = "form-control", @Value = @TempData["requester_email"] } })
         @Html.ValidationMessageFor(model => model.Requester_Email, "", new { @class = "text-danger" })
     </div>
 </div>

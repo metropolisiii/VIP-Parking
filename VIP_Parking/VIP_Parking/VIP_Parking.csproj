@@ -250,12 +250,17 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\AuthorizeADAttribute.cs" />
+    <Compile Include="Helpers\DepartmentsHelper.cs" />
+    <Compile Include="Helpers\EventsHelper.cs" />
     <Compile Include="Helpers\LotsHelper.cs" />
+    <Compile Include="Helpers\PermitsHelper.cs" />
     <Compile Include="Helpers\QRCodeHelper.cs" />
     <Compile Include="Helpers\DebugHelper.cs" />
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\LDAPHelper.cs" />
     <Compile Include="Helpers\NumSlotsHelper.cs" />
+    <Compile Include="Helpers\RequestersHelper.cs" />
+    <Compile Include="Helpers\ReservationsHelper.cs" />
     <Compile Include="Helpers\SwitchableAuthorizationAttribute.cs" />
     <Compile Include="Helpers\UserHelper.cs" />
     <Compile Include="LogExtensions.cs" />
