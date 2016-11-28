@@ -53,19 +53,19 @@
             <div>
                 @if (Model.Approved == 0)
                 {
-                    <button type="submit" id="approve" name="Approve" value="1" class="btn btn-default green">Approve</button>
-                    <button type="submit" id="decline" name="Approve" value="2" class="btn btn-default red">Decline</button>
+                    <button type="submit" id="approve" name="approve" value="1" class="btn btn-default green">Approve</button>
+                    <button type="submit" id="decline" name="approve" value="2" class="btn btn-default red">Decline</button>
                 }
                 else if (Model.Approved == 1)
                 {
-                    <button type="submit" id="approve" name="Approve" value="1" class="btn btn-default green">Resend Approval</button>
-                    <button type="submit" id="decline" name="Approve" value="2" class="btn btn-default red">Decline</button>
+                    <button type="submit" id="approve" name="approve" value="1" class="btn btn-default green">Resend Approval</button>
+                    <button type="submit" id="decline" name="approve" value="2" class="btn btn-default red">Decline</button>
                 }
                 else if (Model.Approved == 2)
                 {
-                    <button type="submit" id="approve" name="Approve" value="1" class="btn btn-default green">Approve</button>
+                    <button type="submit" id="approve" name="approve" value="1" class="btn btn-default green">Approve</button>
                 }
-                <button type="submit" name="Approve" id="cancel" value="0" class="btn btn-default yellow">Cancel</button>
+                <button type="submit" name="approve" id="cancel" value="0" class="btn btn-default yellow">Cancel</button>
             </div>
         </div>        
     </div>

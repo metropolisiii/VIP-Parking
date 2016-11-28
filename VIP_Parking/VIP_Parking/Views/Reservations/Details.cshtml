@@ -13,7 +13,7 @@
     <p>Status: <span class="@TempData["status_class"]">@TempData["status"]</span></p>
     @if (Model.Approved == 1)
     {
-        @Html.Raw("<p class='right'><a class='link_button purple' href='/Permits/Send/" + @TempData["permitID"] + "'>Lost my permit. Request another</a></p>");
+        @Html.Raw("<p class='right'><a class='link_button purple' href='/Permits/Send/" + Model.Reserv_ID + "'>Lost my permit. Request another</a></p>");
     }
 
 
