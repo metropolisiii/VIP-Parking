@@ -242,6 +242,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\DepartmentsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PermitsController.cs" />
@@ -441,6 +442,11 @@
     <Content Include="Views\Permits\Index.cshtml" />
     <Content Include="Views\Permits\Send.cshtml" />
     <Content Include="Views\Reservations\_Form.cshtml" />
+    <Content Include="Views\Departments\Create.cshtml" />
+    <Content Include="Views\Departments\Delete.cshtml" />
+    <Content Include="Views\Departments\Details.cshtml" />
+    <Content Include="Views\Departments\Edit.cshtml" />
+    <Content Include="Views\Departments\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -448,7 +454,6 @@
     <Folder Include="files\" />
     <Folder Include="Filters\" />
     <Folder Include="Views\DatabaseLogin\" />
-    <Folder Include="Views\Permit\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
