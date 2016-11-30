@@ -29,7 +29,7 @@ namespace VIP_Parking.Controllers
                 return View(model);
             }
 
-             IAuthenticationManager authenticationManager = HttpContext.GetOwinContext().Authentication;
+            IAuthenticationManager authenticationManager = HttpContext.GetOwinContext().Authentication;
             #if DEBUG
             var authService = new DatabaseAuthenticationService(authenticationManager);
             #else

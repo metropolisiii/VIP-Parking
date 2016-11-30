@@ -82,6 +82,7 @@
           <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="IsAdmin" Type="bit" Nullable="false" />
           <Property Name="Fullname" Type="varchar" MaxLength="100" />
+          <Property Name="IsLocked" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Reservation">
           <Key>
@@ -103,20 +104,10 @@
           <Property Name="isWaitingList" Type="bit" Nullable="false" />
           <Property Name="RequesterEmail" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
-        <Association Name="FK_AllowedLots_Lot">
-          <End Role="Lot" Type="Self.Lot" Multiplicity="1" />
-          <End Role="AllowedLots" Type="Self.AllowedLots" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Lot">
-              <PropertyRef Name="Lot_ID" />
-            </Principal>
-            <Dependent Role="AllowedLots">
-              <PropertyRef Name="Lot_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_AllowedLots_Reservation">
-          <End Role="Reservation" Type="Self.Reservation" Multiplicity="1" />
+          <End Role="Reservation" Type="Self.Reservation" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="AllowedLots" Type="Self.AllowedLots" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Reservation">
@@ -140,7 +131,9 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Permit_Reservation">
-          <End Role="Reservation" Type="Self.Reservation" Multiplicity="1" />
+          <End Role="Reservation" Type="Self.Reservation" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
           <End Role="Permit" Type="Self.Permit" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Reservation">
@@ -163,54 +156,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Reservation_Category">
-          <End Role="Category" Type="Self.Category" Multiplicity="0..1" />
-          <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Category">
-              <PropertyRef Name="Category_ID" />
-            </Principal>
-            <Dependent Role="Reservation">
-              <PropertyRef Name="Category_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Reservation_Department">
-          <End Role="Department" Type="Self.Department" Multiplicity="0..1" />
-          <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Department">
-              <PropertyRef Name="Dept_ID" />
-            </Principal>
-            <Dependent Role="Reservation">
-              <PropertyRef Name="Dept_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Reservation_Events">
-          <End Role="Events" Type="Self.Events" Multiplicity="0..1" />
-          <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Events">
-              <PropertyRef Name="Event_ID" />
-            </Principal>
-            <Dependent Role="Reservation">
-              <PropertyRef Name="Event_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Reservation_GateCode">
-          <End Role="GateCode" Type="Self.GateCode" Multiplicity="0..1" />
-          <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="GateCode">
-              <PropertyRef Name="GateCode" />
-            </Principal>
-            <Dependent Role="Reservation">
-              <PropertyRef Name="GateCode" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Reservation_ParkingSpot">
           <End Role="ParkingSpot" Type="Self.ParkingSpot" Multiplicity="0..1" />
           <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
@@ -220,18 +165,6 @@
             </Principal>
             <Dependent Role="Reservation">
               <PropertyRef Name="ParkingSpotID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Reservation_Requester">
-          <End Role="Requester" Type="Self.Requester" Multiplicity="1" />
-          <End Role="Reservation" Type="Self.Reservation" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Requester">
-              <PropertyRef Name="Requester_ID" />
-            </Principal>
-            <Dependent Role="Reservation">
-              <PropertyRef Name="Requester_ID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -246,10 +179,6 @@
           <EntitySet Name="Permit" EntityType="Self.Permit" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Requester" EntityType="Self.Requester" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Reservation" EntityType="Self.Reservation" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_AllowedLots_Lot" Association="Self.FK_AllowedLots_Lot">
-            <End Role="Lot" EntitySet="Lot" />
-            <End Role="AllowedLots" EntitySet="AllowedLots" />
-          </AssociationSet>
           <AssociationSet Name="FK_AllowedLots_Reservation" Association="Self.FK_AllowedLots_Reservation">
             <End Role="Reservation" EntitySet="Reservation" />
             <End Role="AllowedLots" EntitySet="AllowedLots" />
@@ -266,28 +195,8 @@
             <End Role="Department" EntitySet="Department" />
             <End Role="Requester" EntitySet="Requester" />
           </AssociationSet>
-          <AssociationSet Name="FK_Reservation_Category" Association="Self.FK_Reservation_Category">
-            <End Role="Category" EntitySet="Category" />
-            <End Role="Reservation" EntitySet="Reservation" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Reservation_Department" Association="Self.FK_Reservation_Department">
-            <End Role="Department" EntitySet="Department" />
-            <End Role="Reservation" EntitySet="Reservation" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Reservation_Events" Association="Self.FK_Reservation_Events">
-            <End Role="Events" EntitySet="Events" />
-            <End Role="Reservation" EntitySet="Reservation" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Reservation_GateCode" Association="Self.FK_Reservation_GateCode">
-            <End Role="GateCode" EntitySet="GateCode" />
-            <End Role="Reservation" EntitySet="Reservation" />
-          </AssociationSet>
           <AssociationSet Name="FK_Reservation_ParkingSpot" Association="Self.FK_Reservation_ParkingSpot">
             <End Role="ParkingSpot" EntitySet="ParkingSpot" />
-            <End Role="Reservation" EntitySet="Reservation" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Reservation_Requester" Association="Self.FK_Reservation_Requester">
-            <End Role="Requester" EntitySet="Requester" />
             <End Role="Reservation" EntitySet="Reservation" />
           </AssociationSet>
         </EntityContainer>
@@ -376,6 +285,7 @@
           <Property Name="Fullname" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Department" Relationship="Self.FK_Requester_Department" FromRole="Requester" ToRole="Department" />
           <NavigationProperty Name="Reservations" Relationship="Self.FK_Reservation_Requester" FromRole="Requester" ToRole="Reservation" />
+          <Property Name="IsLocked" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Reservation">
           <Key>
@@ -640,6 +550,7 @@
           <EntitySetMapping Name="Requesters">
             <EntityTypeMapping TypeName="VIPPARKINGModel.Requester">
               <MappingFragment StoreEntitySet="Requester">
+                <ScalarProperty Name="IsLocked" ColumnName="IsLocked" />
                 <ScalarProperty Name="Requester_ID" ColumnName="Requester_ID" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="Password" ColumnName="Password" />

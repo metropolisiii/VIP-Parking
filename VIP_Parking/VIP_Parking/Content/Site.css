@@ -210,6 +210,18 @@ input[type="radio"] {
     position: relative;
     top: 10px;
 }
+ul#users_list {
+    line-height: 2.2;
+    list-style: outside none none;
+    padding: 0;
+}
+.user_item {
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+#user_info {
+    margin-top: 20px;
+}
 /* site title
 ----------------------------------------------------------*/
 .site-title {
