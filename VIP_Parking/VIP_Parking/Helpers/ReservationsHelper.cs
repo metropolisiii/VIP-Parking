@@ -74,6 +74,8 @@ namespace VIP_Parking.Helpers
             //If this is a waiting list request
             if (waiting_list != null)
                 reservation.isWaitingList = true;
+            else
+                reservation.isWaitingList = false;
 
             reservation.RequesterEmail = viewModel.Requester_Email;
             if (update)

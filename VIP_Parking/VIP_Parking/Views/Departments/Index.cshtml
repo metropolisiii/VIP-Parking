@@ -12,6 +12,9 @@
     <title>@ViewBag.Title</title>
 </head>
 <body>
+    <p style="margin-bottom:25px">
+        @Html.ActionLink("Back to Reservations", "Index", "Reservations", null, new { @class = "link_button purple" })
+    </p>
     <p>
         @Html.ActionLink("Create New Department", "Create", new { controller = "Departments" }, new { @class = "link_button purple" })
     </p>
