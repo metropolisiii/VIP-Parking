@@ -20,7 +20,8 @@ namespace VIP_Parking.Helpers
                     Lastname = lastname,
                     Dept_ID = deptID,
                     Email = email,
-                    Fullname = firstname + " " + lastname
+                    Fullname = firstname + " " + lastname,
+                    IsLocked = false
                 };
                 db.Requesters.Add(requester);
                 db.SaveChanges();
@@ -47,6 +48,16 @@ namespace VIP_Parking.Helpers
         {
             var requester_results = db.Requesters.Where(r => r.Requester_ID == requesterID).Single();
             return requester_results.IsAdmin;
+        }
+        public static bool IsLocked(string username)
+        {
+            using (VIPPARKINGEntities1 db = new VIPPARKINGEntities1())
+            {
+                var user = db.Requesters.Where(r => r.Username == username).Single();
+                if (user == null)
+                    return false;
+                return user.IsLocked;
+            }
         }
     }
 }

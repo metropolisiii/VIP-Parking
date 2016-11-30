@@ -246,6 +246,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PermitsController.cs" />
+    <Compile Include="Controllers\RequestersController.cs" />
     <Compile Include="Controllers\ReservationsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -263,7 +264,6 @@
     <Compile Include="Helpers\RequestersHelper.cs" />
     <Compile Include="Helpers\ReservationsHelper.cs" />
     <Compile Include="Helpers\SwitchableAuthorizationAttribute.cs" />
-    <Compile Include="Helpers\UserHelper.cs" />
     <Compile Include="LogExtensions.cs" />
     <Compile Include="Middleware\ActiveDirectoryAuthenticationService.cs" />
     <Compile Include="Middleware\DatabaseAuthenticationService.cs" />
@@ -447,6 +447,11 @@
     <Content Include="Views\Departments\Details.cshtml" />
     <Content Include="Views\Departments\Edit.cshtml" />
     <Content Include="Views\Departments\Index.cshtml" />
+    <Content Include="Views\Requesters\Create.cshtml" />
+    <Content Include="Views\Requesters\Delete.cshtml" />
+    <Content Include="Views\Requesters\Details.cshtml" />
+    <Content Include="Views\Requesters\Edit.cshtml" />
+    <Content Include="Views\Requesters\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
