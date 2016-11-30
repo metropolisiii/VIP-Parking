@@ -40,7 +40,18 @@ namespace VIP_Parking.Controllers
                 return RedirectToAction("Logoff", "Login");
             }
         }
-       
+        // GET: Reservations/WaitingList
+        [Authorize]
+        public ActionResult WaitingList()
+        {
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
+
+            //Get all reservations that are on the waiting list
+            var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Start_Time >= DateTime.Now && r.isWaitingList).OrderBy(r => r.Start_Time);
+            TempData["waiting_list"] = true;
+            return View("Index",reservations);
+        }
         // GET: Reservations/Details/5
         [Authorize]
         public ActionResult Details(int? id)
@@ -275,11 +286,20 @@ namespace VIP_Parking.Controllers
             List<string> recipients = new List<string>();
             foreach (var rec in admin_results)
                 recipients.Add(rec.Email);
-            EmailHelper.SendEmail("Someone Has Cancelled a Reservation for a Parking Spot", reservation.Requester.Fullname + " has cancelled a reservation for " + reservation.NumOfSlots + " spaces on " + reservation.Start_Time + " - " + reservation.End_Time+".", recipients);
+            string message = reservation.Requester.Fullname + " has cancelled a reservation for " + reservation.NumOfSlots + " spaces on " + reservation.Start_Time + " - " + reservation.End_Time + ".";
+            //Check if there are slots on the waiting list
+            var waitinglist_items = db.Reservations.Where(s => s.isWaitingList && ((s.Start_Time <= reservation.Start_Time && s.End_Time > reservation.Start_Time) || (s.Start_Time < reservation.End_Time && s.End_Time >= reservation.End_Time) || (s.Start_Time >= reservation.Start_Time && s.End_Time < reservation.End_Time)));
+            foreach (Reservation item in waitinglist_items)
+            {
+                if (NumSlotsHelper.isReserveable(ReservationsHelper.ViewModelFromReservation(item))) ;
+                {
+                    message = message + ". There is a possibility that a reservation on the waiting list may fill this spot";
+                }
+            }
+            EmailHelper.SendEmail("Someone Has Cancelled a Reservation for a Parking Spot", message, recipients);
             db.Reservations.Remove(reservation);
             db.SaveChanges();
-            //Notify admin that reservation was cancelled
-            
+                     
             
             return RedirectToAction("Index");
         }

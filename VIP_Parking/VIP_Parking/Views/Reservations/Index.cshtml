@@ -6,7 +6,13 @@
 
 @if ((bool)Session["isAdmin"])
 {
-    <h2>Parking Reservation Admininstration</h2>
+    if (TempData["waiting_list"] != null)
+    {
+        <h2>Waiting List Administraton</h2>
+    }
+    else {
+       <h2>Parking Reservation Admininstration</h2>
+    }
 }
 else {
     <h2>Your Existing Reservations</h2>
@@ -16,48 +22,72 @@ else {
 </p>
 @if ((bool)Session["isAdmin"])
 {
-    <h3>Current Requests</h3>
+
+    if (TempData["waiting_list"] == null)
+    {
+        <h3>Current Requests</h3>
+        <div id="waiting_list">
+            <a href="/Reservations/WaitingList" class="link_button gray">Waiting List</a>
+        </div>
+    }
+    else
+    {
+        <h3>Waiting List Requests</h3>
+        <div id="waiting_list">
+            <a href="/Reservations">Back to Reservations</a>
+        </div>
+    }
 }
 <div class="table">
-   @foreach (var item in Model) {
-       var weekDay = item.Start_Time.DayOfWeek;
+    @foreach (var item in Model)
+    {
+        var weekDay = item.Start_Time.DayOfWeek;
 
-    <div class="table-row">
-        <div class="table-column event_name">
-            @{ 
-                string eventName = "";
-                if (item.Event != null)
-                {
-                    eventName = item.Event.Event_Name;
+        <div class="table-row">
+            <div class="table-column event_name">
+                @{
+                    string eventName = "";
+                    if (item.Event != null)
+                    {
+                        eventName = item.Event.Event_Name;
+                    }
                 }
-            }
-            <span class="reservation_info">
-                @if ((bool)Session["isAdmin"])
-                {
-                    @Html.ActionLink(eventName + " " + @weekDay + ", " + item.Start_Time.ToString("MMMM dd - h:mmtt") + "-" + item.End_Time.ToString("h:mmtt"), "Edit", new { id = item.Reserv_ID })
-                }
-                else
-                {
-                    @Html.ActionLink(eventName + " " + @weekDay + ", " + item.Start_Time.ToString("MMMM dd - h:mmtt") + "-" + item.End_Time.ToString("h:mmtt"), "Details", new { id = item.Reserv_ID })
-                }
+                <span class="reservation_info">
+                    @if ((bool)Session["isAdmin"])
+                    {
+                        @Html.ActionLink(eventName + " " + @weekDay + ", " + item.Start_Time.ToString("MMMM dd - h:mmtt") + "-" + item.End_Time.ToString("h:mmtt"), "Edit", new { id = item.Reserv_ID })
+                    }
+                    else
+                    {
+                        @Html.ActionLink(eventName + " " + @weekDay + ", " + item.Start_Time.ToString("MMMM dd - h:mmtt") + "-" + item.End_Time.ToString("h:mmtt"), "Details", new { id = item.Reserv_ID })
+                    }
 
-            </span>           
-            <div class="reservation_approved_status">
-                @if (item.Approved == 1){
-                    <div class="green">Approved!</div>
-                }
-                else if (item.Approved == 2){
-                     <div class="red">Declined</div>   
-                }
-                else{
-                    <div class="gray">Processing</div>
-                }
-             </div>           
-          </div>
-        <div class="table-column">
-           @Html.ActionLink("Cancel","Delete",new { id=item.Reserv_ID }, new { @class="link_button white"})
+                </span>
+                <div class="reservation_approved_status">
+                    @if (item.Approved == 1)
+                    {
+                        <div class="green">Approved!</div>
+                    }
+                    else if (item.Approved == 2)
+                    {
+                        <div class="red">Declined</div>
+                    }
+                    else {
+
+                        if (TempData["waiting_list"] == null)
+                        {
+                            <div class="gray">Processing</div>
+                        }
+                        else {
+                            <div class="gray">Waiting List</div>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="table-column">
+                @Html.ActionLink("Cancel", "Delete", new { id = item.Reserv_ID }, new { @class = "link_button white" })
+            </div>
         </div>
-    </div>
-}
+                    }
 
 </div>
