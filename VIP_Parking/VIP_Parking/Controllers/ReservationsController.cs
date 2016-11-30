@@ -94,6 +94,7 @@ namespace VIP_Parking.Controllers
 
         // POST: Reservations/Create
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult Create(ReservationVM reservationVM, string waiting_list)
         {
@@ -255,6 +256,7 @@ namespace VIP_Parking.Controllers
         }
 
         // GET: Reservations/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -274,6 +276,7 @@ namespace VIP_Parking.Controllers
 
         // POST: Reservations/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
