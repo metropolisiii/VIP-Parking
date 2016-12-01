@@ -49,6 +49,7 @@ namespace VIP_Parking.Middeware
             try
             {
                 isAuthenticated = principalContext.ValidateCredentials(username, password, ContextOptions.Negotiate);
+                //To do - Looking into FindByIdentity initial exception catch
                 if (isAuthenticated)
                     userPrincipal = UserPrincipal.FindByIdentity(principalContext, IdentityType.SamAccountName, username);
             }

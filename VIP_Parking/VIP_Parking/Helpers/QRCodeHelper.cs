@@ -54,6 +54,8 @@ namespace VIP_Parking.Helpers
                 g.DrawString("Regis University", font, brush, rect, format);
                 rect.Y = textHeight;
                 g.DrawString("VIP Parking Permit", font, brush, rect, format);
+                rect.Y = textHeight * 2;
+                g.DrawString(permit.Reservation.RecipientName, font, brush, rect, format);
             }
             img.Save(temp, System.Drawing.Imaging.ImageFormat.Png);
         }
