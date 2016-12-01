@@ -41,6 +41,7 @@ namespace VIP_Parking.Middleware
                 Requester requester = db.Requesters.Where(user => user.Username == username && user.Password == password).SingleOrDefault();
                 if (RequestersHelper.IsLocked(username))
                     return new AuthenticationResult("Account is locked.");
+                
                 // User found in the database
                 if (requester != null)
                 {
