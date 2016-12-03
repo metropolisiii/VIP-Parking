@@ -102,12 +102,12 @@ namespace VIP_Parking.Controllers
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title", reservationVM.Category_ID);
             ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", reservationVM.Dept_ID);
             ViewBag.Requester_ID = new SelectList(db.Requesters.OrderBy(x => x.Firstname), "Requester_ID", "Fullname", reservationVM.Requester_ID);
-
+            TempData["requester_email"] = reservationVM.Requester_Email;
+             
             //If the reservation form validates
             if (ModelState.IsValid)
             {
                 var r = new Reservation();
-                int reserv_ID = ReservationsHelper.UpdateReservation(db, r, reservationVM, (int)Session["userID"], waiting_list);
                 bool isReserveable = NumSlotsHelper.isReserveable(reservationVM);
                 if (!isReserveable && waiting_list == null)
                 {
@@ -119,6 +119,8 @@ namespace VIP_Parking.Controllers
                     ModelState.AddModelError("ErrorNumSlots", "You have exceeded the number of available spaces. The number of avaiable spaces is: " + (NumSlotsHelper.getSlotsInLot() - NumSlotsHelper.getSlotsTaken(start_time, end_time)) + ". You may check back later to see if any spaces have opened up. <button id='waiting_list' name='waiting_list' value='waiting_list' type='submit'>Place me on a waiting list</button> ");
                     return View(reservationVM);
                 }
+                int reserv_ID = ReservationsHelper.UpdateReservation(db, r, reservationVM, (int)Session["userID"], waiting_list);
+                
                 //Email administrators notification to administrator notifying him or her that someone has placed a reservation request
                 //Get administrators
                 var admin_results = db.Requesters.Where(i => i.IsAdmin == true);
@@ -129,6 +131,9 @@ namespace VIP_Parking.Controllers
                 {
                     EmailHelper.SendEmail("Someone Has Submitted a Reservation for a Parking Spot", Session["firstname"] + " " + Session["lastname"] + " has submitted a request for " + reservationVM.NumOfSlots + " spaces on " + reservationVM.Date + ". You may log into the Regis Parking Reservation system at <a href='http://parking.regis.edu/admin'>http://parking.regis.edu/admin</a> to review this reservation.", recipients);
 
+                    //Log to history
+                    HistoryHelper.AddToHistory("Request", reserv_ID);
+                    
                     //Email requestor notifying him or her that a reservation has been made and needs reviewing
                     EmailHelper.SendEmail("Comfirmation for Regis Parking Lot Reservation", Session["firstname"] + ",<br/><br/>You are receiving this email to verify that we have received your submission for a parking request for " + reservationVM.NumOfSlots + " spaces on " + reservationVM.Date + ". Please give us 24 hours to review your reservation to determine if we will be able to accommodate your request.<br/><br/>Sincerely, <br/>Regis Parking Administration", (string)Session["email"]);
                     return RedirectToAction("Success", new { status = "request", reserv_id = reserv_ID });
@@ -136,6 +141,9 @@ namespace VIP_Parking.Controllers
                 else {
                     //If the user placed himself on a waiting list, email the administrator
                     EmailHelper.SendEmail("Someone Was Placed on the Regis Parking Waiting List", Session["firstname"] + " " + Session["lastname"] + " has submitted a request for " + reservationVM.NumOfSlots + " spaces on " + reservationVM.Date + "between "+reservationVM.Start_Time+reservationVM.Start_Time+" and "+reservationVM.End_Time+reservationVM.End_Ampm+". Currently, the lot is full at this time and the requester has chosen to be placed on the waiting list. You may log into the Regis Parking Reservation system at <a href='http://parking.regis.edu/admin'>http://parking.regis.edu/admin</a> to review this reservation.", recipients);
+                    
+                    //Log to history
+                    HistoryHelper.AddToHistory("Waiting List", reserv_ID);
                     return RedirectToAction("Success",new {status = "waiting list", reserv_id = reserv_ID });
                 }                
             }
@@ -220,11 +228,13 @@ namespace VIP_Parking.Controllers
                             return RedirectToAction("Delete", new { id = reservationVM.Reserv_ID });
                         case 1: //Reservation was approved
                             ReservationsHelper.ApproveReservation(reservationVM, existingReservation);
+                            HistoryHelper.AddToHistory("Approved", reservationVM.Reserv_ID);
                             return RedirectToAction("Success", new { status = "approved", reserv_id = reservationVM.Reserv_ID });
                         case 2: //Reservation was declined
                             //Remove any permits from the database
                             db.Permits.RemoveRange(db.Permits.Where(p => p.Reserv_ID == reservationVM.Reserv_ID));
                             db.SaveChanges();
+                            HistoryHelper.AddToHistory("Declined", reservationVM.Reserv_ID);
                             //Send email to requester to notify that reservation was declined
                             string event_name = "";
                             if (reservationVM.Event != null)

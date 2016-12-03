@@ -29,7 +29,10 @@ a {
     a:hover {
         background-color: #c7d1d6;
     }
-
+.form-group {
+    margin-bottom: 15px;
+    overflow: hidden;
+}
 .table {
     display: table;
     table-layout:fixed;
@@ -184,7 +187,7 @@ footer {
     height: 100px;
 }
 
-.datepicker {
+.datepicker, .datepicker_anystart {
     float: left;
     margin-right: 10px;
     width: 33%;
@@ -223,6 +226,19 @@ ul#users_list {
 }
 #user_info {
     margin-top: 20px;
+}
+
+#report table {
+    margin-bottom: 40px;
+    width: 50%;
+}
+#report th {
+    width: 50%;
+}
+#clipboard_status {
+    color: green;
+    font-weight: bold;
+    margin-top: 15px;
 }
 /* site title
 ----------------------------------------------------------*/

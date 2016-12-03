@@ -12,10 +12,12 @@ namespace VIP_Parking.Models.Database
     using System;
     using System.Collections.Generic;
     
-    public partial class Permit
+    public partial class History
     {
-        public long PermitCode { get; set; }
-        public int Reserv_ID { get; set; }
+        public int ItemID { get; set; }
+        public System.DateTime Date { get; set; }
+        public string Action { get; set; }
+        public Nullable<int> Reserv_ID { get; set; }
     
         public virtual Reservation Reservation { get; set; }
     }

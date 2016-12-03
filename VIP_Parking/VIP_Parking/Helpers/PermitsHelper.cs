@@ -21,7 +21,7 @@ namespace VIP_Parking.Helpers
                 int permit_number = 1000;
                 var permit_number_query = db.Permits.OrderByDescending(p => p.PermitCode).FirstOrDefault();
                 if (permit_number_query != null)
-                    permit_number = permit_number_query.PermitCode + 1;
+                    permit_number = (int)permit_number_query.PermitCode + 1;
                 Permit permit = new Permit { PermitCode = permit_number, Reserv_ID = reservationVM.Reserv_ID };
                 db.Permits.Add(permit);
                 db.SaveChanges();

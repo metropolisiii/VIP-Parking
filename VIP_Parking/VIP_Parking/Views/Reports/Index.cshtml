@@ -1,0 +1,91 @@
+﻿@model VIP_Parking.ViewModels.ReportsVM
+
+@{
+    ViewBag.Title = "Report";
+}
+<div>
+    @Html.ActionLink("Back to Reservations", "Index")
+</div>
+<h2>VIP Report</h2>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.StartDate, "Start Date: *", htmlAttributes: new { @class = "control-label col-md-4" })
+        <div class="col-md-6">
+            @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control datepicker_anystart", @readonly = "readonly", id="reports_startdate" } })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.EndDate, "End Date: *", htmlAttributes: new { @class = "control-label col-md-4" })
+        <div class="col-md-6">
+            @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control datepicker_anystart", @readonly = "readonly", id="reports_enddate" } })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Category_ID, "VIP Category:", htmlAttributes: new { @class = "control-label col-md-4" })
+        <div class="col-md-6">
+            @Html.DropDownListFor(model => model.Category_ID, null, string.Empty, htmlAttributes: new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Dept_ID, "Sponsoring Department", htmlAttributes: new { @class = "control-label col-md-4" })
+        <div class="col-md-6">
+            @Html.DropDownListFor(model => model.Dept_ID, null, string.Empty, htmlAttributes: new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div>
+            <input type="submit" value="Submit Information" class="btn btn-default" />
+        </div>
+    </div>
+}
+@if (IsPost)
+{
+    <hr/>
+    <div id="report">
+        <h1>VIP Report - @Html.DisplayFor(model => model.StartDate) - @Html.DisplayFor(model => model.EndDate)</h1>
+        <div id="department_report">
+            <table>
+                <tr>
+                    <th>Department</th>
+                    <th>VIP Requests</th>
+                </tr>
+                @foreach (var item in ViewBag.department_results)
+                {
+                    <tr>
+                        <td>@item.DeptName</td>
+                        <td>@item.DeptCount</td>
+                    </tr>
+                }
+            </table>
+        </div><!--#department_report-->
+        
+        <div id="category_report">
+            <table>
+                <tr>
+                    <th>VIP Category</th>
+                    <th># of Requests By Category</th>
+                </tr>
+                @foreach (var item in ViewBag.category_results)
+                {
+                    <tr>
+                        <td>@item.CategoryName</td>
+                        <td>@item.CategoryCount</td>
+                    </tr>
+                }
+            </table>
+        </div><!--#department_report-->
+    </div>
+    <div id="copytoclipboard">
+        <p>You may copy this table to the clipboard so that you may paste it into something like an Excel file.</p>
+        <button class="btn" data-clipboard-target="#report">
+            Copy Table to Clipboard
+        </button>
+        <p id="clipboard_status"></p>
+    </div>
+}
+<!-- Department Report Results -->

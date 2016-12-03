@@ -15,5 +15,20 @@
         if (!c)
             return false;
     });
+    $(".datepicker_anystart").datepicker({
+        showOn: "button",
+        buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
+        buttonImageOnly: true
+    });
     
+    var clipboard = new Clipboard('.btn');
+
+    clipboard.on('success', function (e) {
+        $('#clipboard_status').text("Table was copied to clipboard");
+        e.clearSelection();
+    });
+
+    clipboard.on('error', function (e) {
+        $('#clipboard_status').text("Table was not copied to clipboard. Please try again.");
+    });
 });

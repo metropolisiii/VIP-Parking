@@ -17,6 +17,7 @@ namespace VIP_Parking.Models.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Reservation()
         {
+            this.Histories = new HashSet<History>();
             this.Permits = new HashSet<Permit>();
             this.Lots = new HashSet<Lot>();
         }
@@ -36,11 +37,14 @@ namespace VIP_Parking.Models.Database
         public byte Approved { get; set; }
         public bool isWaitingList { get; set; }
         public string RequesterEmail { get; set; }
+        public System.DateTime CreationDate { get; set; }
     
         public virtual Category Category { get; set; }
         public virtual Department Department { get; set; }
         public virtual Event Event { get; set; }
         public virtual GateCode GateCode1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<History> Histories { get; set; }
         public virtual ParkingSpot ParkingSpot { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Permit> Permits { get; set; }
