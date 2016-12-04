@@ -92,7 +92,13 @@ namespace VIP_Parking.Middeware
             sess.Session["lastname"] = userPrincipal.Surname;
             sess.Session["email"] = userPrincipal.EmailAddress;
             sess.Session["user_department"] = GetProperty(directoryEntry, "Department");
-            sess.Session["is_admin"] = false;
+            sess.Session["isAdmin"] = false;
+
+            //Insert or update the requesters department
+            sess.Session["deptID"] = DepartmentsHelper.Upsert((string)sess.Session["user_department"]);
+
+            //Insert or update Requestor table
+            sess.Session["userID"] = RequestersHelper.Upsert((string)sess.Session["username"], userPrincipal.GivenName, userPrincipal.Surname, userPrincipal.EmailAddress, (int)sess.Session["deptID"]);
 
             return new AuthenticationResult();
         }

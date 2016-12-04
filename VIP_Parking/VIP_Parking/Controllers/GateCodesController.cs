@@ -15,14 +15,20 @@ namespace VIP_Parking.Controllers
         private VIPPARKINGEntities1 db = new VIPPARKINGEntities1();
 
         // GET: GateCodes
+        [Authorize]
         public ActionResult Index()
         {
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
             return View(db.GateCodes.ToList());
         }
 
         // GET: GateCodes/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -36,8 +42,11 @@ namespace VIP_Parking.Controllers
         }
 
         // GET: GateCodes/Create
+        [Authorize]
         public ActionResult Create()
         {
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
             return View();
         }
 
@@ -45,9 +54,12 @@ namespace VIP_Parking.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "GateCode1,StartDate,EndDate")] GateCode gateCode)
         {
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
             if (ModelState.IsValid)
             {
                 db.GateCodes.Add(gateCode);
@@ -59,8 +71,11 @@ namespace VIP_Parking.Controllers
         }
 
         // GET: GateCodes/Edit/5
+        [Authorize]
         public ActionResult Edit(int? id)
         {
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -77,9 +92,12 @@ namespace VIP_Parking.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "GateCode1,StartDate,EndDate")] GateCode gateCode)
         {
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
             if (ModelState.IsValid)
             {
                 db.Entry(gateCode).State = EntityState.Modified;
@@ -90,8 +108,11 @@ namespace VIP_Parking.Controllers
         }
 
         // GET: GateCodes/Delete/5
+        [Authorize]
         public ActionResult Delete(int? id)
         {
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -106,9 +127,12 @@ namespace VIP_Parking.Controllers
 
         // POST: GateCodes/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
             GateCode gateCode = db.GateCodes.Find(id);
             db.GateCodes.Remove(gateCode);
             db.SaveChanges();

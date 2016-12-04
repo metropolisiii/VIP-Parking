@@ -484,7 +484,6 @@
     <Content Include="Views\GateCodes\Details.cshtml" />
     <Content Include="Views\GateCodes\Edit.cshtml" />
     <Content Include="Views\GateCodes\Index.cshtml" />
-    <Content Include="Views\GateCodes\Upload.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

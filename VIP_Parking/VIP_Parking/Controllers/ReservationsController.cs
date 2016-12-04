@@ -26,7 +26,8 @@ namespace VIP_Parking.Controllers
             //Get this user's current reservations. Any reservations made in the past will not be displayed 
             //Only the logged in user or an admin can get a list of reservations. If the logged in user is not an admin, he only sees his reservations. Admins see all reservations.
             try {
-                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Start_Time >= DateTime.Now && !r.isWaitingList).OrderBy(r => r.Approved).ThenBy(r => r.Start_Time);
+                DateTime today = DateTime.Now.AddDays(-1); //Taking away an hour so that reservations will stay on the list until a day after they expire.
+                var reservations = db.Reservations.Include(r => r.Event).Where(r => r.Start_Time >=today && !r.isWaitingList).OrderBy(r => r.Approved).ThenBy(r => r.Start_Time);
 
                 if (!(bool)Session["isAdmin"]) //Admins get listing of all reservations. Requesters only see their requests.
                 {
