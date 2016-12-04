@@ -6,6 +6,7 @@ using Microsoft.Owin.Security;
 using MyProject;
 using System.Linq;
 using System.Web;
+using VIP_Parking.Helpers;
 
 namespace VIP_Parking.Middleware
 {
@@ -37,8 +38,9 @@ namespace VIP_Parking.Middleware
             PrincipalContext principalContext = new PrincipalContext(authenticationType);
 
             bool isAuthenticated = false;
-            bool isAdmin = false;
-            
+            if (RequestersHelper.IsLocked(username))
+                return new AuthenticationResult("Account is locked.");
+
             UserPrincipal userPrincipal = null;
             try
             {

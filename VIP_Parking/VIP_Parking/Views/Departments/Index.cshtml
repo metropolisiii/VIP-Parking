@@ -1,0 +1,44 @@
+﻿@model IEnumerable<VIP_Parking.Models.Database.Department>
+
+@{
+    ViewBag.Title = "Departments";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <p style="margin-bottom:25px">
+        @Html.ActionLink("Back to Reservations", "Index", "Reservations", null, new { @class = "link_button purple" })
+    </p>
+    <p>
+        @Html.ActionLink("Create New Department", "Create", new { controller = "Departments" }, new { @class = "link_button purple" })
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayName("Department")
+            </th>
+            <th></th>
+        </tr>
+    
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dept_name)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=item.Dept_ID }) |
+                @Html.ActionLink("Details", "Details", new { id=item.Dept_ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.Dept_ID })
+            </td>
+        </tr>
+    }
+    
+    </table>
+</body>
+</html>

@@ -18,112 +18,15 @@
 
     <div class="form-horizontal">
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.RecipientName, "Guest Name *", htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-6">
-                @Html.EditorFor(model => model.RecipientName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RecipientName, "", new { @class = "text-danger" })
-            </div>
+        @Html.Partial("_Form")      
+    </div>
+    <div class="form-group">
+        <div>
+            <input type="submit" value="Submit Information" class="btn btn-default" />
         </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.RecipientEmail, "Guest Email", htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-6">
-                @Html.EditorFor(model => model.RecipientEmail, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RecipientEmail, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.Category_ID, "VIP Category", htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-6">
-                @Html.DropDownListFor(model => model.Category_ID, null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Category_ID, "", new { @class = "text-danger" })
-            </div>
-        </div> 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Event, "Event", htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-6">
-                @Html.EditorFor(model => model.Event, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Event, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.Date, "Date of Visit *", htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-6">
-                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control datepicker", @readonly = "readonly" } })
-                @Html.Raw(HttpUtility.HtmlDecode(Html.ValidationMessage("ErrorNumSlots").ToHtmlString()))
-                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group" id="visittimes">
-            <label class="control-label col-md-3">Time of Visit *</label>
-            <div class="col-md-6">
-                @Html.LabelFor(model => model.Start_Time, "From:", htmlAttributes: new { @class = "control-label col-md-2" })
-                @Html.EditorFor(model => model.Start_Time, new { htmlAttributes = new { @class = "form-control col-md-3 timebox" } })
-                @Html.ValidationMessageFor(model => model.Start_Time, "", new { @class = "text-danger" })
-                <div class="ampm col-md-4">
-                   <div>
-                        @Html.RadioButtonFor(model => model.Start_Ampm, "AM")
-                         am 
-                    </div>
-                    <div>
-                         @Html.RadioButtonFor(model => model.Start_Ampm, "PM", new { Checked = "checked" })
-                         pm
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-offset-3 col-md-6">
-                @Html.LabelFor(model => model.End_Time, "To:", htmlAttributes: new { @class = "control-label col-md-2" })
-                @Html.EditorFor(model => model.End_Time, new { htmlAttributes = new { @class = "form-control col-md-3 timebox" } })
-                @Html.ValidationMessageFor(model => model.End_Time, "", new { @class = "text-danger" })
-                <div class="ampm col-md-4">
-                    <div>
-                        @Html.RadioButtonFor(model => model.End_Ampm, "AM")
-                        am
-                    </div>
-                    <div>
-                        @Html.RadioButtonFor(model => model.End_Ampm, "PM", new { Checked = "checked" })
-                        pm
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.NumOfSlots, "Number of Spaces Requested *", htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-2">
-                @Html.EditorFor(model => model.NumOfSlots, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.NumOfSlots, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.Label("requester-name", "Name of Requester *", htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-6">
-                @Html.TextBox("requester-name", Session["firstname"] + " " + Session["lastname"], htmlAttributes: new { @class = "form-control", @readonly = "readonly" })
-             </div>
-        </div>
-        <div class="form-group">
-            @Html.Label("requester-email", "Requester Email *", htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-6">
-                @Html.TextBox("requester-email", Session["email"], htmlAttributes: new { @class = "form-control", @readonly = "readonly" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.Dept_ID, "Sponsoring Department", htmlAttributes: new { @class = "control-label col-md-4" })
-            <div class="col-md-6">
-                @Html.DropDownListFor(model => model.Dept_ID, null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Dept_ID, "", new { @class = "text-danger" })
-            </div>
-        </div> 
-        <div class="form-group">
-            <div>
-                <input type="submit" value="Submit Information" class="btn btn-default" />
-            </div>
-        </div>       
     </div>
 }
 
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
-    <script src="@Url.Content("~/Scripts/checkdaterange.js")" type="text/javascript"></script>
+    @Scripts.Render("~/bundles/jqueryval")   
 }

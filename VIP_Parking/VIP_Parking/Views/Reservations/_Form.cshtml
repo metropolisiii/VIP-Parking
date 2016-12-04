@@ -1,0 +1,111 @@
+﻿@model VIP_Parking.ViewModels.ReservationVM
+
+<div class="form-group">
+    @Html.LabelFor(model => model.RecipientName, "Guest Name *", htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-6">
+        @Html.EditorFor(model => model.RecipientName, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.RecipientName, "", new { @class = "text-danger" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.RecipientEmail, "Guest Email", htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-6">
+        @Html.EditorFor(model => model.RecipientEmail, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.RecipientEmail, "", new { @class = "text-danger" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Category_ID, "VIP Category", htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-6">
+        @Html.DropDownListFor(model => model.Category_ID, null, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Category_ID, "", new { @class = "text-danger" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Event, "Event", htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-6">
+        @Html.EditorFor(model => model.Event, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.Event, "", new { @class = "text-danger" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Date, "Date of Visit *", htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-6">
+        @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control datepicker", @readonly = "readonly" } })
+        @Html.Raw(HttpUtility.HtmlDecode(Html.ValidationMessage("ErrorNumSlots").ToHtmlString()))
+        @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+    </div>
+</div>
+<div class="form-group" id="visittimes">
+    <label class="control-label col-md-3">Time of Visit *</label>
+    <div class="col-md-6">
+        @Html.LabelFor(model => model.Start_Time, "From:", htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.EditorFor(model => model.Start_Time, new { htmlAttributes = new { @class = "form-control col-md-3 timebox" } })
+        @Html.ValidationMessageFor(model => model.Start_Time, "", new { @class = "text-danger" })
+        <div class="ampm col-md-4">
+            <div>
+                @Html.RadioButtonFor(model => model.Start_Ampm, "AM")
+                am
+            </div>
+           
+            <div>
+                @Html.RadioButtonFor(model => model.Start_Ampm, "PM", new { Checked = "checked" })
+                pm
+            </div>
+            @Html.ValidationMessageFor(model => model.Start_Ampm, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="col-md-offset-3 col-md-6">
+        @Html.LabelFor(model => model.End_Time, "To:", htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.EditorFor(model => model.End_Time, new { htmlAttributes = new { @class = "form-control col-md-3 timebox" } })
+        @Html.ValidationMessageFor(model => model.End_Time, "", new { @class = "text-danger" })
+        <div class="ampm col-md-4">
+            <div>
+                @Html.RadioButtonFor(model => model.End_Ampm, "AM")
+                am
+            </div>
+            <div>
+                @Html.RadioButtonFor(model => model.End_Ampm, "PM", new { Checked = "checked" })
+                pm
+            </div>
+            @Html.ValidationMessageFor(model => model.End_Ampm, "", new { @class = "text-danger" })
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.NumOfSlots, "Number of Spaces Requested *", htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-2">
+        @Html.EditorFor(model => model.NumOfSlots, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(model => model.NumOfSlots, "", new { @class = "text-danger" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.Label("requester-name", "Name of Requester *", htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-6">
+        @if ((bool)Session["isAdmin"])
+        {
+            @Html.DropDownListFor(model => model.Requester_ID, null, htmlAttributes: new { @class = "form-control" });
+        }
+        else {
+            @Html.TextBox("requester-name", Session["firstname"] + " " + Session["lastname"], htmlAttributes: new { @class = "form-control", @readonly = "readonly" });
+        }
+        @Html.ValidationMessageFor(model => model.Requester_ID, "", new { @class = "text-danger" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.Label("requester-email", "Requester Email *", htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-6">
+        @Html.EditorFor(model => model.Requester_Email, new { htmlAttributes = new { @class = "form-control", @Value = @TempData["requester_email"] } })
+        @Html.ValidationMessageFor(model => model.Requester_Email, "", new { @class = "text-danger" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Dept_ID, "Sponsoring Department", htmlAttributes: new { @class = "control-label col-md-4" })
+    <div class="col-md-6">
+        @Html.DropDownListFor(model => model.Dept_ID, null, htmlAttributes: new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Dept_ID, "", new { @class = "text-danger" })
+    </div>
+</div>
+
+ 
+

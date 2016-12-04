@@ -8,9 +8,11 @@
         <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         @Styles.Render("~/Content/css")
+        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
         @Scripts.Render("~/bundles/modernizr")
         @Scripts.Render("~/bundles/jquery")
         @Scripts.Render("~/Scripts/jquery-ui-1.12.1.js")
+        @Scripts.Render("~/Scripts/clipboard.min.js")
         @Scripts.Render("~/Scripts/Scripts.js")
         @RenderSection("scripts", required: false)     
     </head>
@@ -30,6 +32,15 @@
                     {
                         <span>Welcome, @Session["firstname"]</span>
                         <span>@Html.ActionLink("Log out", "Logoff", "Login")</span>
+                        if ((bool)@Session["isAdmin"])
+                        {
+                            <div id="admin_nav_menu">
+                                <a href="/Requesters">Users</a>
+                                <a href="/Departments">Departments</a>
+                                <a href="/Categories">VIP Categories</a>
+                                <a href="/Reservations/WaitingList">Waiting List</a>
+                            </div>
+                        }
                     }
                 </div><!--.user_links-->
             </div>

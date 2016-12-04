@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
 
 namespace VIP_Parking.ViewModels
@@ -16,5 +12,7 @@ namespace VIP_Parking.ViewModels
         [AllowHtml]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        public bool IsLocked { get; set; }
     }
 }

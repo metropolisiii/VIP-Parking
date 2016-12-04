@@ -1,14 +1,11 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
 using Microsoft.Owin.Security;
 using MyProject;
-using VIP_Parking.Models.Database;
-using System.Linq;
 using VIP_Parking.ViewModels;
-using VIP_Parking.Middeware;
 using VIP_Parking.Middleware;
+using System.Web.Security;
+using VIP_Parking.Helpers;
 
 namespace VIP_Parking.Controllers
 {
@@ -22,7 +19,6 @@ namespace VIP_Parking.Controllers
             return View();
         }
 
-
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -33,88 +29,32 @@ namespace VIP_Parking.Controllers
                 return View(model);
             }
 
-            // usually this will be injected via DI. but creating this manually now for brevity
             IAuthenticationManager authenticationManager = HttpContext.GetOwinContext().Authentication;
-#if DEBUG
-            var authService = new WindowsAuthenticationService(authenticationManager);
-#else
+            #if DEBUG
+            var authService = new DatabaseAuthenticationService(authenticationManager);
+            #else
             var authService = new ActiveDirectoryAuthenticationService(authenticationManager);
-#endif
+            #endif
             var authenticationResult = authService.SignIn(model.Username, model.Password);
 
             if (authenticationResult.IsSuccess)
             {
-                int deptID = 0;
-
-                //If the department isn't in the Department table, insert it
-                VIPPARKINGEntities1 db = new VIPPARKINGEntities1();
-
-                string user_department = Session["user_department"].ToString();
-                var d = db.Departments.Where(i => i.Dept_name == user_department);
-                if (d.Count() == 0)
-                {
-                    var department = new VIP_Parking.Models.Database.Department
-                    {
-                        Dept_name = (string)Session["user_department"]
-                    };
-                    db.Departments.Add(department);
-                    db.SaveChanges();
-                    deptID = department.Dept_ID;
-                }
-                else
-                {
-                    foreach(var rec in d)
-                    {
-                        deptID = rec.Dept_ID;
-                    }                   
-                }
+                //Insert or update the requesters department
+                Session["deptID"] = DepartmentsHelper.Upsert((string)Session["user_department"]);
 
                 //Insert or update Requestor table
-                string username = Session["username"].ToString();
-                var requester_results = db.Requesters.Where(u => u.Username == username);
-                if (requester_results.Count() == 0)
-                {
-                    var requester = new VIP_Parking.Models.Database.Requester
-                    {
-                        Username = (string)Session["username"],
-                        Firstname = (string)Session["firstname"],
-                        Lastname = (string)Session["lastname"],
-                        Dept_ID = deptID,
-                        Email = (string)Session["email"]
-                    };
-                    db.Requesters.Add(requester);
-                    db.SaveChanges();
-                    Session["userID"] = requester.Requester_ID;
-                }
-                else
-                {
-                    foreach (var requester in requester_results)
-                    {
-                        requester.Firstname = (string)Session["firstname"];
-                        requester.Lastname = (string)Session["lastname"];
-                        requester.Dept_ID = deptID;
-                        requester.Email = (string)Session["email"];
+                Session["userID"] = RequestersHelper.Upsert((string)Session["username"], (string)Session["firstname"], (string)Session["lastname"], (string)Session["email"], (int)Session["deptID"]);
 
-                        try
-                        {
-                            db.SaveChanges();
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e);
-                        }
-                        Session["userID"] = requester.Requester_ID;
-                    }
+                //Is the user an admin
+                Session["isAdmin"] = RequestersHelper.IsAdmin((int)Session["userID"]);                
 
-                }
-                Session["Dept_ID"] = deptID;
                 return RedirectToLocal(returnUrl);
             }
             ModelState.AddModelError("", authenticationResult.ErrorMessage);
             return View(model);
         }
 
-
+        //Redirect back to the page the user was on
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -123,24 +63,15 @@ namespace VIP_Parking.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
+
+        //Log off
         public virtual ActionResult Logoff()
         {
             IAuthenticationManager authenticationManager = HttpContext.GetOwinContext().Authentication;
             authenticationManager.SignOut(MyAuthentication.ApplicationCookie);
-
+            FormsAuthentication.SignOut();
+            Session.Abandon();
             return RedirectToAction("Index");
         }
-    }
-
-
-    public class LoginViewModel
-    {
-        [Required, AllowHtml]
-        public string Username { get; set; }
-
-        [Required]
-        [AllowHtml]
-        [DataType(DataType.Password)]
-        public string Password { get; set; }
     }
 }

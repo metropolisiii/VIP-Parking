@@ -18,6 +18,7 @@ namespace VIP_Parking.Models.Database
         public Lot()
         {
             this.ParkingSpots = new HashSet<ParkingSpot>();
+            this.Reservations = new HashSet<Reservation>();
         }
     
         public int Lot_ID { get; set; }
@@ -26,5 +27,7 @@ namespace VIP_Parking.Models.Database
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ParkingSpot> ParkingSpots { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Reservation> Reservations { get; set; }
     }
 }

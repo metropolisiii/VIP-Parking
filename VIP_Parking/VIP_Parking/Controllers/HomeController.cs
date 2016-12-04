@@ -1,6 +1,5 @@
 ﻿using System.Web.Mvc;
 
-
 namespace VIP_Parking.Controllers
 {
     public class HomeController : Controller

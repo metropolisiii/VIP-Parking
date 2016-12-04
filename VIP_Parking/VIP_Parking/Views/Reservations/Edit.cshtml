@@ -1,114 +1,75 @@
-﻿@model VIP_Parking.Models.Database.Reservation
-
+﻿@model VIP_Parking.ViewModels.ReservationVM
 @{
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit</h2>
-
+<div>
+    @Html.ActionLink("Back to Reservations", "Index")
+</div>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>Reservation</h4>
-        <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Reserv_ID)
-
+        @Html.Partial("_Form")
         <div class="form-group">
-            @Html.LabelFor(model => model.Requester_ID, "Requester_ID", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("Requester_ID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Requester_ID, "", new { @class = "text-danger" })
+            @Html.LabelFor(model => model.GateCode, "Gate Code", htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class="col-md-6">
+                @Html.TextBoxFor(model => model.GateCode, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
             </div>
         </div>
-
         <div class="form-group">
-            @Html.LabelFor(model => model.RecipientName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.RecipientName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RecipientName, "", new { @class = "text-danger" })
-            </div>
-        </div>
+            @Html.LabelFor(model => model.Lots, "Lots Allowed", htmlAttributes: new { @class = "control-label col-md-4" })
+            <div class=" col-md-8">
+                <table>
+                    <tr>
+                         @{
+                            int cnt = 0;
+                            List<VIP_Parking.ViewModels.AllowedLotsVM> lots = ViewBag.Lots;
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.NumOfSlots, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.NumOfSlots, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.NumOfSlots, "", new { @class = "text-danger" })
-            </div>
+                            foreach (var lot in lots)
+                            {
+                                if (cnt++ % 3 == 0)
+                                {
+                                    @:</tr><tr>
+                                }
+                                @:<td>
+                                    <input type="checkbox"
+                                        name="selectedLots"
+                                        value="@lot.Lot_ID"
+                                        @(Html.Raw(lot.Allowed ? "checked=\"checked\"" : "")) />
+                                        @lot.Lot_Name
+                                @:</td>
+                            }
+                            @:</tr>
+                         }
+                 </table>
+             </div>
         </div>
-
         <div class="form-group">
-            @Html.LabelFor(model => model.RecipientEmail, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.RecipientEmail, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RecipientEmail, "", new { @class = "text-danger" })
+            <div>
+                @if (Model.Approved == 0)
+                {
+                    <button type="submit" id="approve" name="approve" value="1" class="btn btn-default green">Approve</button>
+                    <button type="submit" id="decline" name="approve" value="2" class="btn btn-default red">Decline</button>
+                }
+                else if (Model.Approved == 1)
+                {
+                    <button type="submit" id="approve" name="approve" value="1" class="btn btn-default green">Resend Approval</button>
+                    <button type="submit" id="decline" name="approve" value="2" class="btn btn-default red">Decline</button>
+                }
+                else if (Model.Approved == 2)
+                {
+                    <button type="submit" id="approve" name="approve" value="1" class="btn btn-default green">Approve</button>
+                }
+                <button type="submit" name="approve" id="cancel" value="0" class="btn btn-default yellow">Cancel</button>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Category_ID, "Category_ID", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("Category_ID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Category_ID, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ParkingSpotID, "ParkingSpotID", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("ParkingSpotID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ParkingSpotID, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Event_ID, "Event_ID", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("Event_ID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Event_ID, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.GateCode, "GateCode", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("GateCode", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.GateCode, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Start_Time, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Start_Time, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Start_Time, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.End_Time, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.End_Time, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.End_Time, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
+        </div>        
     </div>
 }
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
-
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }

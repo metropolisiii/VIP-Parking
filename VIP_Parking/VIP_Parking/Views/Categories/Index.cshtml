@@ -1,0 +1,36 @@
+﻿@model IEnumerable<VIP_Parking.Models.Database.Category>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+<p style="margin-bottom:25px">
+    @Html.ActionLink("Back to Reservations", "Index", "Reservations", null, new { @class = "link_button purple" })
+</p>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Category_ID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Category_ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Category_ID })
+        </td>
+    </tr>
+}
+
+</table>

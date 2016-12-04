@@ -29,6 +29,7 @@ namespace VIP_Parking.Models.Database
         public virtual DbSet<Department> Departments { get; set; }
         public virtual DbSet<Event> Events { get; set; }
         public virtual DbSet<GateCode> GateCodes { get; set; }
+        public virtual DbSet<History> Histories { get; set; }
         public virtual DbSet<Lot> Lots { get; set; }
         public virtual DbSet<ParkingSpot> ParkingSpots { get; set; }
         public virtual DbSet<Permit> Permits { get; set; }

@@ -28,6 +28,8 @@ namespace VIP_Parking.Models.Database
         public Nullable<int> Dept_ID { get; set; }
         public string Email { get; set; }
         public bool IsAdmin { get; set; }
+        public string Fullname { get; set; }
+        public bool IsLocked { get; set; }
     
         public virtual Department Department { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

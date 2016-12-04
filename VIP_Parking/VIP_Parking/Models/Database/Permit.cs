@@ -14,7 +14,7 @@ namespace VIP_Parking.Models.Database
     
     public partial class Permit
     {
-        public int PermitCode { get; set; }
+        public long PermitCode { get; set; }
         public int Reserv_ID { get; set; }
     
         public virtual Reservation Reservation { get; set; }

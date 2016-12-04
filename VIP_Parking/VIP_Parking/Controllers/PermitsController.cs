@@ -124,31 +124,35 @@ namespace VIP_Parking.Controllers
 
         // GET: Permits/Send/5
         [Authorize]
-        public ActionResult Send(int? id)
+        public ActionResult Send(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Permit permit = db.Permits.Find(id);
-            if (permit == null)
-            {
-                return HttpNotFound();
-            }
+            //Get all of the permits associated with a reservation and send them to the requester and admin
+            List<Permit> permits = db.Permits.Where(r => r.Reserv_ID == id).ToList();
+            if (permits == null)
+               return HttpNotFound();
+            
             //Send the permit information to the user
             string message = Session["firstname"] + ", <br/><br/> Attached to this email is the informaton for the Regis VIP Parking permit you requested for ";
-            if (permit.Reservation.Event != null)
-                message += permit.Reservation.Event.Event_Name + " ";
-            message += permit.Reservation.Start_Time.ToString("MMMM dd") + " " + permit.Reservation.Start_Time.ToString("h:mm tt") + " - " + permit.Reservation.End_Time.ToString("h:mm tt") + ". <br/><br/>Please be sure to print this attachment and place it in your vehicle in a spot that can easily be seen and scanned.<br/><br/>The gate code for this lot will be: " + permit.Reservation.GateCode;
 
-            //Get Permit Attachment
+            //Add event information to message
+            if (permits[0].Reservation.Event != null)
+                message += permits[0].Reservation.Event.Event_Name + " ";
+            message += permits[0].Reservation.Start_Time.ToString("MMMM dd") + " " + permits[0].Reservation.Start_Time.ToString("h:mm tt") + " - " + permits[0].Reservation.End_Time.ToString("h:mm tt") + ". <br/><br/>Please be sure to print this attachment and place it in your vehicle in a spot that can easily be seen and scanned.<br/><br/>The gate code for this lot will be: " + permits[0].Reservation.GateCode;
+
+            //Get Permit Attachments
+            List<string> attachments = new List<string>();
+
+            //Get QR Code associated with each permit
+            //Initial path to permit QR Codes
             var attachment = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "files/");
-            attachment = attachment + "qrcode_" + id + ".gif";
 
-            EmailHelper.SendEmail("Your Regis VIP Parking Permit", message, permit.Reservation.Requester.Email, attachment);
-            return View(permit);
+            foreach (Permit permit in permits)
+               attachments.Add(attachment+ "qrcode_" + permit.PermitCode + ".gif");
+            
+            //Send the email to the requester with permits           
+            EmailHelper.SendEmail("Your Regis VIP Parking Permit", message, permits[0].Reservation.Requester.Email, attachments);
+            return View(permits[0]);
         }
-
        
         protected override void Dispose(bool disposing)
         {

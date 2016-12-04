@@ -4,30 +4,90 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Your Existing Reservations</h2>
-
+@if ((bool)Session["isAdmin"])
+{
+    if (TempData["waiting_list"] != null)
+    {
+        <h2>Waiting List Administraton</h2>
+    }
+    else {
+       <h2>Parking Reservation Admininstration</h2>
+    }
+}
+else {
+    <h2>Your Existing Reservations</h2>
+}
 <p class="right">
     @Html.ActionLink("New Reservation", "Create", new { controller = "Reservations" }, new { @class = "link_button purple" })
 </p>
-<div class="table">
-   @foreach (var item in Model) {
-       var weekDay = item.Start_Time.DayOfWeek;
+@if ((bool)Session["isAdmin"])
+{
 
-    <div class="table-row">
-        <div class="table-column event_name">
-            @{ 
-                string eventName = "";
-                if (item.Event != null)
-                {
-                    eventName = item.Event.Event_Name;
-                }
-            }
-            @Html.ActionLink(eventName+" "+@weekDay+", "+item.Start_Time.ToString("MMMM dd - h:mmtt") + "-"+item.End_Time.ToString("h:mmtt"),"Details",new { id=item.Reserv_ID })
+    if (TempData["waiting_list"] == null)
+    {
+        <h3>Current Requests</h3>
+        <div id="waiting_list">
+            <a href="/Reservations/WaitingList" class="link_button gray">Waiting List</a>
         </div>
-        <div class="table-column">
-            @Html.ActionLink("Cancel","Delete",new { id=item.Reserv_ID }, new { @class="link_button white"})
+    }
+    else
+    {
+        <h3>Waiting List Requests</h3>
+        <div id="waiting_list">
+            <a href="/Reservations">Back to Reservations</a>
         </div>
-    </div>
+    }
 }
+<div class="table">
+    @foreach (var item in Model)
+    {
+        var weekDay = item.Start_Time.DayOfWeek;
+
+        <div class="table-row">
+            <div class="table-column event_name">
+                @{
+                    string eventName = "";
+                    if (item.Event != null)
+                    {
+                        eventName = item.Event.Event_Name;
+                    }
+                }
+                <span class="reservation_info">
+                    @if ((bool)Session["isAdmin"])
+                    {
+                        @Html.ActionLink(eventName + " " + @weekDay + ", " + item.Start_Time.ToString("MMMM dd - h:mmtt") + "-" + item.End_Time.ToString("h:mmtt"), "Edit", new { id = item.Reserv_ID })
+                    }
+                    else
+                    {
+                        @Html.ActionLink(eventName + " " + @weekDay + ", " + item.Start_Time.ToString("MMMM dd - h:mmtt") + "-" + item.End_Time.ToString("h:mmtt"), "Details", new { id = item.Reserv_ID })
+                    }
+
+                </span>
+                <div class="reservation_approved_status">
+                    @if (item.Approved == 1)
+                    {
+                        <div class="green">Approved!</div>
+                    }
+                    else if (item.Approved == 2)
+                    {
+                        <div class="red">Declined</div>
+                    }
+                    else {
+
+                        if (TempData["waiting_list"] == null)
+                        {
+                            <div class="gray">Processing</div>
+                        }
+                        else {
+                            <div class="gray">Waiting List</div>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="table-column">
+                @Html.ActionLink("Cancel", "Delete", new { id = item.Reserv_ID }, new { @class = "link_button white" })
+            </div>
+        </div>
+                    }
 
 </div>

@@ -7,6 +7,8 @@ using MyProject;
 using System.Linq;
 using System.Web;
 using System.Web.Configuration;
+using VIP_Parking.Models.Database;
+using VIP_Parking.Helpers;
 
 namespace VIP_Parking.Middeware
 {
@@ -33,6 +35,9 @@ namespace VIP_Parking.Middeware
         //Sign in handler
         public AuthenticationResult SignIn(String username, String password)
         {
+            if (RequestersHelper.IsLocked(username))
+                return new AuthenticationResult("Account is locked.");
+            
             // authenticates against your Domain AD
             ContextType authenticationType = ContextType.Domain;
             PrincipalContext principalContext = new PrincipalContext(authenticationType, WebConfigurationManager.AppSettings["ActiveDirectoryDomain"], WebConfigurationManager.AppSettings["ActiveDirectoryBaseOU"], username, password);
@@ -44,6 +49,7 @@ namespace VIP_Parking.Middeware
             try
             {
                 isAuthenticated = principalContext.ValidateCredentials(username, password, ContextOptions.Negotiate);
+                //To do - Looking into FindByIdentity initial exception catch
                 if (isAuthenticated)
                     userPrincipal = UserPrincipal.FindByIdentity(principalContext, IdentityType.SamAccountName, username);
             }

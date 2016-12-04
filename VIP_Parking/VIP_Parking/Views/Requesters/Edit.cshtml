@@ -1,0 +1,68 @@
+﻿@model VIP_Parking.Models.Database.Requester
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Fullname</h2>
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<div id="user_info">
+    <div class="user_item">
+        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">@Html.DisplayFor(model => model.Email)</div>
+    </div>
+    <div class="user_item">
+        <div class="col-md-12">@Html.Label("Current Reservations")</div>
+        @foreach (var item in ViewBag.reservations)
+        {
+            var weekDay = item.Start_Time.DayOfWeek;
+            <div class="table-row">
+                <div class="table-column event_name">
+                    @{
+                        string eventName = "";
+                        if (item.Event != null)
+                        {
+                            eventName = item.Event.Event_Name;
+                        }
+                    }
+                    <span class="reservation_info">
+                        <a href="/Reservations/Edit/@item.Reserv_ID">
+                            @(eventName + " " + @weekDay + ", " + item.Start_Time.ToString("MMMM dd - h:mmtt") + "-" + item.End_Time.ToString("h:mmtt"));
+                        </a>
+                    </span>
+                    <div class="reservation_approved_status">
+                        @if (item.Approved == 1)
+                        {
+                            <div class="green">Approved!</div>
+                        }
+                        else if (item.Approved == 2)
+                        {
+                            <div class="red">Declined</div>
+                        }
+                        else {
+                            <div class="gray">Processing</div>
+                        }
+                    </div>
+                </div>
+                <div class="table-column">
+                    @Html.ActionLink("Cancel", "Delete", new { id = item.Reserv_ID }, new { @class = "link_button white" })
+                </div>
+            </div><!--.table_row-->
+                        }
+    </div>
+    @if (Model.IsLocked)
+    {
+        @Html.ActionLink("Unlock", "Unlock", new { controller = "Requesters", id = Model.Requester_ID }, new { @class = "link_button purple" })
+    }
+    else
+    {
+        @Html.ActionLink("Lock", "Lock", new { controller = "Requesters", id = Model.Requester_ID }, new { @class = "link_button purple" })
+    }
+</div>
+
+
+
