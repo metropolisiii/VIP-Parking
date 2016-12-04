@@ -39,16 +39,7 @@ namespace VIP_Parking.Controllers
 
             if (authenticationResult.IsSuccess)
             {
-                //Insert or update the requesters department
-                Session["deptID"] = DepartmentsHelper.Upsert((string)Session["user_department"]);
-
-                //Insert or update Requestor table
-                Session["userID"] = RequestersHelper.Upsert((string)Session["username"], (string)Session["firstname"], (string)Session["lastname"], (string)Session["email"], (int)Session["deptID"]);
-
-                //Is the user an admin
-                Session["isAdmin"] = RequestersHelper.IsAdmin((int)Session["userID"]);                
-
-                return RedirectToLocal(returnUrl);
+               return RedirectToLocal(returnUrl);
             }
             ModelState.AddModelError("", authenticationResult.ErrorMessage);
             return View(model);

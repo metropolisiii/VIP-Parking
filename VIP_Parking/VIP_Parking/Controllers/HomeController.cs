@@ -8,10 +8,7 @@ namespace VIP_Parking.Controllers
         public ActionResult Index()
         {
             ViewBag.Message = "";
-            if (Session["userID"] != null)
-                return RedirectToAction("Index","Reservations");
-            else
-                return RedirectToAction("Logoff", "Login");
+            return RedirectToAction("Index","Reservations");
         }
     }
 }
