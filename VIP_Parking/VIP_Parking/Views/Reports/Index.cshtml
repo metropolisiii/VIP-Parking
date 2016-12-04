@@ -3,9 +3,9 @@
 @{
     ViewBag.Title = "Report";
 }
-<div>
-    @Html.ActionLink("Back to Reservations", "Index")
-</div>
+<p style="margin-bottom:25px">
+    @Html.ActionLink("Back to Reservations", "Index", "Reservations", null, new { @class = "link_button purple" })
+</p>
 <h2>VIP Report</h2>
 @using (Html.BeginForm())
 {

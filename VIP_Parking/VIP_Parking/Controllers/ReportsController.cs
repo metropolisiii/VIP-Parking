@@ -13,11 +13,11 @@ namespace VIP_Parking.Controllers
         private VIPPARKINGEntities1 db = new VIPPARKINGEntities1();
         
         // GET: History
-        
+        [Authorize]
         public ActionResult Index()
         {
-           // if ((bool)Session["isAdmin"] != true)
-             //   return HttpNotFound();
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
            
             //Get report information
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title");
@@ -26,10 +26,13 @@ namespace VIP_Parking.Controllers
         }
 
         [HttpPost]
-        
+        [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult Index(ReportsVM reportsVM)
         {
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
+
             //Build Select Lists
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title", reportsVM.Category_ID);
             ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", reportsVM.Dept_ID);
