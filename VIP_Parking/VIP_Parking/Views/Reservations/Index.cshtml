@@ -20,8 +20,17 @@ else {
 <p class="right">
     @Html.ActionLink("New Reservation", "Create", new { controller = "Reservations" }, new { @class = "link_button purple" })
 </p>
-@if ((bool)Session["isAdmin"])
-{
+@if ((bool)Session["isAdmin"]) { 
+    <div id="search_form">
+        @using (Html.BeginForm("Search", "Reservations", FormMethod.Get))
+        {
+        <p>
+            <label>Search By Requester Name or Guest Name:</label>
+            <br/> @Html.TextBox("SearchString") <br />
+            <input type="submit" value="Search" />
+        </p>
+        } 
+    </div><!--#search_form-->
 
     if (TempData["waiting_list"] == null)
     {
@@ -39,6 +48,10 @@ else {
     }
 }
 <div class="table">
+    @if (Model.Count() == 0)
+    {
+        <h3>No Reservations Found</h3>
+    }
     @foreach (var item in Model)
     {
         var weekDay = item.Start_Time.DayOfWeek;

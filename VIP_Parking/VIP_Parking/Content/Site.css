@@ -29,6 +29,15 @@ a {
     a:hover {
         background-color: #c7d1d6;
     }
+#search_form {
+    border: thin solid #8e8e8e;
+    box-shadow: 10px 10px 10px -1px;
+    display: table-cell;
+    font-size: 10px;
+    line-height: 1.2em;
+    margin-top: 25px;
+    padding: 5px;
+}
 .form-group {
     margin-bottom: 15px;
     overflow: hidden;

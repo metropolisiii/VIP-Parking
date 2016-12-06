@@ -80,7 +80,41 @@ namespace VIP_Parking.Controllers
                 TempData["status_class"] = "green";
             }            
             return View(reservation);
-        }        
+        }
+
+        // GET: Reservations/Search?SearchString=
+        [HttpGet]
+        [Authorize]
+        public ActionResult Search(string SearchString)
+        {
+            if ((bool)Session["isAdmin"] != true)
+                return HttpNotFound();
+            int permit_ID = 0;
+            TempData["SearchString"] = SearchString;
+            var reservations = from r in db.Reservations
+                         select r;
+
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                //Permit ID was passed in. Send admin directly to record
+                if (int.TryParse(SearchString, out permit_ID)){
+                    reservations = from r in db.Reservations
+                                   join p in db.Permits on r.Reserv_ID equals p.Reserv_ID
+                                   where p.PermitCode == permit_ID
+                                   select r;
+                    if (reservations.Count() > 0)
+                    {
+                        return RedirectToAction("Details", new { id = reservations.FirstOrDefault().Reserv_ID });
+                    }
+                }
+                else
+                {
+                    //Otherwise a requester name or guest name was passed in
+                    reservations = reservations.Where(r => r.RecipientName.Contains(SearchString) || r.Requester.Fullname.Contains(SearchString));
+                }
+            }
+            return View("Index",reservations);
+        }
 
         // GET: Reservations/Create
         [Authorize]
