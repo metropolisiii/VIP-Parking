@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -17,7 +18,7 @@ namespace VIP_Parking.Helpers
     {
         public static void GenerateRelayQrCode(int permitID)
         {
-            var qrValue = permitID.ToString();
+            var qrValue = ConfigurationManager.AppSettings["host"].ToString()+"/Reservations/Search?SearchString="+permitID.ToString();
             QRCodeWriter qr = new QRCodeWriter();
             var temp = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "files/");
             temp = temp + "qrcode_" + permitID+".gif";
