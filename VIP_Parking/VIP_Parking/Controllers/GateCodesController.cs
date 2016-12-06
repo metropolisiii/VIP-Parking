@@ -145,16 +145,16 @@ namespace VIP_Parking.Controllers
                     Stream stream = upload.InputStream;
 
                     // We return the interface, so that
-                    IExcelDataReader reader = null;
+                    Excel.IExcelDataReader reader = null;
 
 
                     if (upload.FileName.EndsWith(".xls"))
                     {
-                        reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                        reader = Excel.ExcelReaderFactory.CreateBinaryReader(stream);
                     }
                     else if (upload.FileName.EndsWith(".xlsx"))
                     {
-                        reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                        reader = Excel.ExcelReaderFactory.CreateOpenXmlReader(stream);
                     }
                     else
                     {
