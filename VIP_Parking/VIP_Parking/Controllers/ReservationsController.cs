@@ -226,12 +226,15 @@ namespace VIP_Parking.Controllers
 
                 int a = Convert.ToInt32(approve);
 
+                //Admin wants to approve or decline waiting list recipient
                 if (a != 0 || waiting_list != null)
                 {
                     //Makes sure there is still enough spaces
                     if (a == 1)
                     {
                         bool isReserveable = NumSlotsHelper.isReserveable(reservationVM);
+
+                        //There are not enough spaces
                         if (!isReserveable && waiting_list == null)
                         {
                             //Format the start and end times
@@ -279,7 +282,7 @@ namespace VIP_Parking.Controllers
                     }
                 }
                else {
-                    //If the user placed himself on a waiting list, email the administrator
+                    //If the admin place reservation on a waiting list, email the administrators
                     //Get administrators
                     var admin_results = db.Requesters.Where(i => i.IsAdmin == true);
                     List<string> recipients = new List<string>();
