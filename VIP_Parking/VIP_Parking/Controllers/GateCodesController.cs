@@ -125,6 +125,53 @@ namespace VIP_Parking.Controllers
             return View(gateCode);
         }
 
+        //POST: GateCodes/Upload
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Upload(HttpPostedFileBase upload)
+        {
+            if (ModelState.IsValid)
+            {
+
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    // ExcelDataReader works with the binary Excel file, so it needs a FileStream
+                    // to get started. This is how we avoid dependencies on ACE or Interop:
+                    Stream stream = upload.InputStream;
+
+                    // We return the interface, so that
+                    IExcelDataReader reader = null;
+
+
+                    if (upload.FileName.EndsWith(".xls"))
+                    {
+                        reader = ExcelReaderFactory.CreateBinaryReader(stream);
+                    }
+                    else if (upload.FileName.EndsWith(".xlsx"))
+                    {
+                        reader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("File", "This file format is not supported");
+                        return View();
+                    }
+
+                    reader.IsFirstRowAsColumnNames = true;
+
+                    DataSet result = reader.AsDataSet();
+                    reader.Close();
+
+                    return View(result.Tables[0]);
+                }
+                else
+                {
+                    ModelState.AddModelError("File", "Please Upload Your file");
+                }
+            }
+            return View();
+        }
+
         // POST: GateCodes/Delete/5
         [HttpPost, ActionName("Delete")]
         [Authorize]
