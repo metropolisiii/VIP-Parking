@@ -265,6 +265,7 @@
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\DepartmentsController.cs" />
     <Compile Include="Controllers\GateCodesController.cs" />
+    <Compile Include="Controllers\LotsController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -493,6 +494,11 @@
     <Content Include="Views\GateCodes\Edit.cshtml" />
     <Content Include="Views\GateCodes\Index.cshtml" />
     <Content Include="Views\GateCodes\Upload.cshtml" />
+    <Content Include="Views\Lots\Create.cshtml" />
+    <Content Include="Views\Lots\Delete.cshtml" />
+    <Content Include="Views\Lots\Details.cshtml" />
+    <Content Include="Views\Lots\Edit.cshtml" />
+    <Content Include="Views\Lots\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

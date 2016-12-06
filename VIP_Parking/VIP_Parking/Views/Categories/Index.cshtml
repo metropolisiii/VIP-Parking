@@ -1,21 +1,21 @@
 ﻿@model IEnumerable<VIP_Parking.Models.Database.Category>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "VIP Categories";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>VIP Categories</h2>
 <p style="margin-bottom:25px">
-    @Html.ActionLink("Back to Reservations", "Index", "Reservations", null, new { @class = "link_button purple" })
+    @Html.ActionLink("Back to Reservations", "Index", "Reservations")
 </p>
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New VIP Category", "Create", null, new { @class = "link_button purple" })
 </p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Title)
+            VIP Categories
         </th>
         <th></th>
     </tr>
