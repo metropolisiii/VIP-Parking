@@ -12,6 +12,7 @@ using VIP_Parking.Models.Database;
 using VIP_Parking.ViewModels;
 using VIP_Parking.Helpers;
 using System.IO;
+using System.Configuration;
 
 namespace VIP_Parking.Controllers
 {
@@ -133,6 +134,8 @@ namespace VIP_Parking.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(ReservationVM reservationVM, string waiting_list)
         {
+            string host = ConfigurationManager.AppSettings["host"].ToString();
+
             //Build Select Lists
             ViewBag.Category_ID = new SelectList(db.Categories, "Category_ID", "Title", reservationVM.Category_ID);
             ViewBag.Dept_ID = new SelectList(db.Departments.OrderBy(x => x.Dept_name), "Dept_ID", "Dept_name", reservationVM.Dept_ID);
@@ -164,7 +167,7 @@ namespace VIP_Parking.Controllers
                     recipients.Add(rec.Email);
                 if (waiting_list == null)
                 {
-                    EmailHelper.SendEmail("Someone Has Submitted a Reservation for a Parking Spot", Session["firstname"] + " " + Session["lastname"] + " has submitted a request for " + reservationVM.NumOfSlots + " spaces on " + reservationVM.Date + ". You may log into the Regis Parking Reservation system at <a href='http://parking.regis.edu/admin'>http://parking.regis.edu/admin</a> to review this reservation.", recipients);
+                    EmailHelper.SendEmail("Someone Has Submitted a Reservation for a Parking Spot", Session["firstname"] + " " + Session["lastname"] + " has submitted a request for " + reservationVM.NumOfSlots + " spaces on " + reservationVM.Date + ". You may log into the Regis Parking Reservation system at <a href='"+host+"'>"+host+"</a> to review this reservation.", recipients);
 
                     //Log to history
                     HistoryHelper.AddToHistory("Request", reserv_ID);
@@ -175,7 +178,7 @@ namespace VIP_Parking.Controllers
                 }
                 else {
                     //If the user placed himself on a waiting list, email the administrator
-                    EmailHelper.SendEmail("Someone Was Placed on the Regis Parking Waiting List", Session["firstname"] + " " + Session["lastname"] + " has submitted a request for " + reservationVM.NumOfSlots + " spaces on " + reservationVM.Date + "between "+reservationVM.Start_Time+reservationVM.Start_Time+" and "+reservationVM.End_Time+reservationVM.End_Ampm+". Currently, the lot is full at this time and the requester has chosen to be placed on the waiting list. You may log into the Regis Parking Reservation system at <a href='http://parking.regis.edu/admin'>http://parking.regis.edu/admin</a> to review this reservation.", recipients);
+                    EmailHelper.SendEmail("Someone Was Placed on the Regis Parking Waiting List", Session["firstname"] + " " + Session["lastname"] + " has submitted a request for " + reservationVM.NumOfSlots + " spaces on " + reservationVM.Date + "between "+reservationVM.Start_Time+reservationVM.Start_Time+" and "+reservationVM.End_Time+reservationVM.End_Ampm+". Currently, the lot is full at this time and the requester has chosen to be placed on the waiting list. You may log into the Regis Parking Reservation system at <a href='"+host+"'>"+host+"</a> to review this reservation.", recipients);
                     
                     //Log to history
                     HistoryHelper.AddToHistory("Waiting List", reserv_ID);
@@ -216,6 +219,8 @@ namespace VIP_Parking.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Reserv_ID,RecipientName,RecipientEmail,Category_ID,Event,Date,Start_Time,Start_Ampm,End_Time,End_Ampm,NumOfSlots,Requester_ID,Requester_Email,Dept_ID,GateCode,Approved")] ReservationVM reservationVM, string waiting_list, string approve, string[] selectedLots)
         {
+            string host = ConfigurationManager.AppSettings["host"].ToString();
+
             //Make sure the the admin is editing
             if ((bool)Session["isAdmin"] != true)
                 return HttpNotFound();
@@ -288,7 +293,7 @@ namespace VIP_Parking.Controllers
                     List<string> recipients = new List<string>();
                     foreach (var rec in admin_results)
                         recipients.Add(rec.Email);
-                    EmailHelper.SendEmail("Someone Was Placed on the Regis Parking Waiting List", Session["firstname"] + " " + Session["lastname"] + " has submitted a request for " + reservationVM.NumOfSlots + " spaces on " + reservationVM.Date + "between "+reservationVM.Start_Time+reservationVM.Start_Time+" and "+reservationVM.End_Time+reservationVM.End_Ampm+". Currently, the lot is full at this time and the requester has chosen to be placed on the waiting list. You may log into the Regis Parking Reservation system at <a href='http://parking.regis.edu/admin'>http://parking.regis.edu/admin</a> to review this reservation.", recipients);
+                    EmailHelper.SendEmail("Someone Was Placed on the Regis Parking Waiting List", Session["firstname"] + " " + Session["lastname"] + " has submitted a request for " + reservationVM.NumOfSlots + " spaces on " + reservationVM.Date + "between "+reservationVM.Start_Time+reservationVM.Start_Time+" and "+reservationVM.End_Time+reservationVM.End_Ampm+". Currently, the lot is full at this time and the requester has chosen to be placed on the waiting list. You may log into the Regis Parking Reservation system at <a href='"+host+"'>"+host+"</a> to review this reservation.", recipients);
                     return RedirectToAction("Success",new {status = "waiting list", reserv_id = reservationVM.Reserv_ID });
                 }      
 

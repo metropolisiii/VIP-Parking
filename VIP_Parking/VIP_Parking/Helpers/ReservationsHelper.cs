@@ -193,7 +193,7 @@ namespace VIP_Parking.Helpers
                 }
                 message = message + "<br/><br/>";
             }
-            message = message + "If you have any questions, you may contact <a href = 'mailto:ruparking@regis.edu'>ruparking@regis.edu.</a><br/>< br/> Regis Parking Administration";
+            message = message + "If you have any questions, you may contact <a href = 'mailto:ruparking@regis.edu'>ruparking@regis.edu.</a><br/><br/> Regis Parking Administration";
             EmailHelper.SendEmail("Reservation for Regis VIP Parking was Approved!", message, recipients, attachments);
         }
     }
