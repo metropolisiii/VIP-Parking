@@ -11,7 +11,7 @@ namespace VIP_Parking.Models.Database
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
+    
     public partial class GateCode
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -19,9 +19,9 @@ namespace VIP_Parking.Models.Database
         {
             this.Reservations = new HashSet<Reservation>();
         }
-        [DisplayName("Gate Code")]
+    
+        public int GateCodeID { get; set; }
         public int GateCode1 { get; set; }
-        [DisplayName("Start Date")]
         public System.DateTime StartDate { get; set; }
         public System.DateTime EndDate { get; set; }
     

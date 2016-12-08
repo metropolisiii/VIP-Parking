@@ -15,7 +15,7 @@ namespace VIP_Parking.Helpers
         public static int UpdateReservation(VIPPARKINGEntities1 db, Reservation reservation, ReservationVM viewModel, int userID, string waiting_list, byte approve = 0)
         {
             bool update = false;
-            int gatecode = 0;
+            int? gatecode = null;
             int eventID = 0;
 
             DateTime start_time, end_time;
@@ -45,16 +45,15 @@ namespace VIP_Parking.Helpers
             //Get the event. If one doesn't exist create one.
             if (viewModel.Event != null && isReserveable)
                eventID = EventsHelper.GetOrCreateEvent(viewModel.Event, date);
-            
+
             //Get the current gate code
             if (viewModel.GateCode == 0)
             {
                 var g = db.GateCodes.Where(i => i.StartDate <= date && i.EndDate >= date).SingleOrDefault();
                 if (g != null)
-                    gatecode = g.GateCode1;
+                    gatecode = g.GateCodeID;
             }
-            else
-                gatecode = viewModel.GateCode;
+            
             reservation.GateCode = gatecode;
 
             if (eventID != 0)

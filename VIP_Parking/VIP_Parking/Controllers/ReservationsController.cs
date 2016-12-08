@@ -272,7 +272,7 @@ namespace VIP_Parking.Controllers
                         case 1: //Reservation was approved
                             ReservationsHelper.ApproveReservation(reservationVM, existingReservation);
                             HistoryHelper.AddToHistory("Approved", reservationVM.Reserv_ID);
-                            return RedirectToAction("Success", new { status = "approved", reserv_id = reservationVM.Reserv_ID });
+                            return RedirectToAction("Success", new { status = "approved", reserv_id = reservationVM.Reserv_ID, gatecode = reservationVM.GateCode });
                         case 2: //Reservation was declined
                             //Remove any permits from the database
                             db.Permits.RemoveRange(db.Permits.Where(p => p.Reserv_ID == reservationVM.Reserv_ID));
@@ -361,7 +361,7 @@ namespace VIP_Parking.Controllers
         }
 
         
-        public ActionResult Success(string status, string reserv_id)
+        public ActionResult Success(string status, string reserv_id, int? gatecode = null)
         {
             //Get the reservation
             var res = db.Reservations.Find(Convert.ToInt32(reserv_id));
@@ -383,7 +383,7 @@ namespace VIP_Parking.Controllers
                     message = "<p>This reservation for " + event_info + " has been declined. The requester will be notified of this status.</p>";
                     break;
                 case "approved":
-                    message = "<p>This reservation for " + event_info + " has been approved! The requester will be notified of this status and will be sent " + reservation.NumOfSlots + " permit(s) and a gate code of " + reservation.GateCode + ".";
+                    message = "<p>This reservation for " + event_info + " has been approved! The requester will be notified of this status and will be sent " + reservation.NumOfSlots + " permit(s) and a gate code of " + gatecode + ".";
                     break;
                 default:
                     break;

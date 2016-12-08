@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -163,10 +164,46 @@ namespace VIP_Parking.Controllers
                     }
 
                     reader.IsFirstRowAsColumnNames = true;
-
+                    
                     DataSet result = reader.AsDataSet();
-                    reader.Close();
+                    string[] formats = {"M/d/yyyy h:mm:ss tt", "M/d/yyyy h:mm tt",
+                   "MM/dd/yyyy hh:mm:ss", "M/d/yyyy h:mm:ss",
+                   "M/d/yyyy hh:mm tt", "M/d/yyyy hh tt",
+                   "M/d/yyyy h:mm", "M/d/yyyy h:mm",
+                   "MM/dd/yyyy hh:mm", "M/dd/yyyy hh:mm"};
+                    //Go through each row in the dataset and check to see if the row already exists in the database. If it does, update it. If not, insert it
 
+                    foreach (DataTable table in result.Tables)
+                    {
+                        foreach (DataRow dr in table.Rows)
+                        {
+                            DateTime dateValue;
+                            //Make sure item is a date
+                            if (DateTime.TryParseExact(dr.ItemArray[0].ToString(),formats, new CultureInfo("en-US"), DateTimeStyles.None, out dateValue)){
+                                GateCode gc = new GateCode();
+                                Console.WriteLine(dateValue);
+                                //Check if row already exists in database
+                                var dt = db.GateCodes.Where(d => d.StartDate >= dateValue && d.StartDate <= dateValue).SingleOrDefault();
+                                if (dt == null)
+                                { //Insert into database
+                                    gc.StartDate = dateValue;
+                                    gc.EndDate = dateValue.AddDays(7);
+                                    gc.GateCode1 = Int32.Parse(dr.ItemArray[2].ToString());
+                                    db.GateCodes.Add(gc);
+                                    db.SaveChanges();
+                                }
+                                else //Update database
+                                {
+                                    dt.StartDate = dateValue;
+                                    dt.EndDate = dateValue.AddDays(7);
+                                    dt.GateCode1 = Int32.Parse(dr.ItemArray[2].ToString());
+                                    db.Entry(dt).State = EntityState.Modified;
+                                    db.SaveChanges();
+                                }
+                            }
+                        }
+                    }
+                    reader.Close();
                     return View(result.Tables[0]);
                 }
                 else
