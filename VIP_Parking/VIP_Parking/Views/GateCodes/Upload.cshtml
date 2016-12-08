@@ -7,7 +7,10 @@
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary()
-
+    <p>You may use this tool to bulk upload gate codes through an Excel spreadsheet. Please see the picture below for the format needed in the Excel file.</p>
+    <div id="gatecode_sample">
+        <img src="~/Images/gatecode_sample.png"/>
+    </div>
     <div class="form-group">
         <input type="file" id="dataFile" name="upload" />
     </div>
