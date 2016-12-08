@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Excel;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -10,21 +12,20 @@ using VIP_Parking.Models.Database;
 
 namespace VIP_Parking.Controllers
 {
-    public class CategoriesController : Controller
+    public class GateCodesController : Controller
     {
         private VIPPARKINGEntities1 db = new VIPPARKINGEntities1();
-    
 
-        // GET: Categories
+        // GET: GateCodes
         [Authorize]
         public ActionResult Index()
         {
             if ((bool)Session["isAdmin"] != true)
                 return HttpNotFound();
-            return View(db.Categories.ToList());
+            return View(db.GateCodes.ToList());
         }
 
-        // GET: Categories/Details/5
+        // GET: GateCodes/Details/5
         [Authorize]
         public ActionResult Details(int? id)
         {
@@ -34,15 +35,15 @@ namespace VIP_Parking.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = db.Categories.Find(id);
-            if (category == null)
+            GateCode gateCode = db.GateCodes.Find(id);
+            if (gateCode == null)
             {
                 return HttpNotFound();
             }
-            return View(category);
+            return View(gateCode);
         }
 
-        // GET: Categories/Create
+        // GET: GateCodes/Create
         [Authorize]
         public ActionResult Create()
         {
@@ -51,27 +52,27 @@ namespace VIP_Parking.Controllers
             return View();
         }
 
-        // POST: Categories/Create
+        // POST: GateCodes/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Category_ID,Title")] Category category)
+        public ActionResult Create([Bind(Include = "GateCode1,StartDate,EndDate")] GateCode gateCode)
         {
             if ((bool)Session["isAdmin"] != true)
                 return HttpNotFound();
             if (ModelState.IsValid)
             {
-                db.Categories.Add(category);
+                db.GateCodes.Add(gateCode);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(category);
+            return View(gateCode);
         }
 
-        // GET: Categories/Edit/5
+        // GET: GateCodes/Edit/5
         [Authorize]
         public ActionResult Edit(int? id)
         {
@@ -81,34 +82,34 @@ namespace VIP_Parking.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = db.Categories.Find(id);
-            if (category == null)
+            GateCode gateCode = db.GateCodes.Find(id);
+            if (gateCode == null)
             {
                 return HttpNotFound();
             }
-            return View(category);
+            return View(gateCode);
         }
 
-        // POST: Categories/Edit/5
+        // POST: GateCodes/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Category_ID,Title")] Category category)
+        public ActionResult Edit([Bind(Include = "GateCode1,StartDate,EndDate")] GateCode gateCode)
         {
             if ((bool)Session["isAdmin"] != true)
                 return HttpNotFound();
             if (ModelState.IsValid)
             {
-                db.Entry(category).State = EntityState.Modified;
+                db.Entry(gateCode).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(category);
+            return View(gateCode);
         }
 
-        // GET: Categories/Delete/5
+        // GET: GateCodes/Delete/5
         [Authorize]
         public ActionResult Delete(int? id)
         {
@@ -118,15 +119,65 @@ namespace VIP_Parking.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = db.Categories.Find(id);
-            if (category == null)
+            GateCode gateCode = db.GateCodes.Find(id);
+            if (gateCode == null)
             {
                 return HttpNotFound();
             }
-            return View(category);
+            return View(gateCode);
+        }
+        public ActionResult Upload()
+        {
+            return View();
+        }
+        //POST: GateCodes/Upload
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Upload(HttpPostedFileBase upload)
+        {
+            if (ModelState.IsValid)
+            {
+
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    // ExcelDataReader works with the binary Excel file, so it needs a FileStream
+                    // to get started. This is how we avoid dependencies on ACE or Interop:
+                    Stream stream = upload.InputStream;
+
+                    // We return the interface, so that
+                    Excel.IExcelDataReader reader = null;
+
+
+                    if (upload.FileName.EndsWith(".xls"))
+                    {
+                        reader = Excel.ExcelReaderFactory.CreateBinaryReader(stream);
+                    }
+                    else if (upload.FileName.EndsWith(".xlsx"))
+                    {
+                        reader = Excel.ExcelReaderFactory.CreateOpenXmlReader(stream);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("File", "This file format is not supported");
+                        return View();
+                    }
+
+                    reader.IsFirstRowAsColumnNames = true;
+
+                    DataSet result = reader.AsDataSet();
+                    reader.Close();
+
+                    return View(result.Tables[0]);
+                }
+                else
+                {
+                    ModelState.AddModelError("File", "Please Upload Your file");
+                }
+            }
+            return View();
         }
 
-        // POST: Categories/Delete/5
+        // POST: GateCodes/Delete/5
         [HttpPost, ActionName("Delete")]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -134,8 +185,8 @@ namespace VIP_Parking.Controllers
         {
             if ((bool)Session["isAdmin"] != true)
                 return HttpNotFound();
-            Category category = db.Categories.Find(id);
-            db.Categories.Remove(category);
+            GateCode gateCode = db.GateCodes.Find(id);
+            db.GateCodes.Remove(gateCode);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

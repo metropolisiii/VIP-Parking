@@ -3,9 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-
+<<<<<<< HEAD
 using System.Globalization;
-
+=======
+using System.Data.SqlClient;
+using System.Configuration;
+>>>>>>> 95990dcf491b2bfeafdc18095611af2a4fed215c
 using System.IO;
 using System.Linq;
 using System.Net;
