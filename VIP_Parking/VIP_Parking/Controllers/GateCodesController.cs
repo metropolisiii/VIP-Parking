@@ -182,8 +182,9 @@ namespace VIP_Parking.Controllers
                         foreach (DataRow dr in table.Rows)
                         {
                             DateTime dateValue;
+                            int gatecodeValue;
                             //Make sure item is a date
-                            if (DateTime.TryParseExact(dr.ItemArray[0].ToString(),formats, new CultureInfo("en-US"), DateTimeStyles.None, out dateValue)){
+                            if (DateTime.TryParseExact(dr.ItemArray[0].ToString(),formats, new CultureInfo("en-US"), DateTimeStyles.None, out dateValue) && Int32.TryParse(dr.ItemArray[2].ToString(), out gatecodeValue)){
                                 GateCode gc = new GateCode();
                                 Console.WriteLine(dateValue);
                                 //Check if row already exists in database
