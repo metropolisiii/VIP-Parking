@@ -347,7 +347,7 @@ namespace VIP_Parking.Controllers
             var waitinglist_items = db.Reservations.Where(s => s.isWaitingList && ((s.Start_Time <= reservation.Start_Time && s.End_Time > reservation.Start_Time) || (s.Start_Time < reservation.End_Time && s.End_Time >= reservation.End_Time) || (s.Start_Time >= reservation.Start_Time && s.End_Time < reservation.End_Time)));
             foreach (Reservation item in waitinglist_items)
             {
-                if (NumSlotsHelper.isReserveable(ReservationsHelper.ViewModelFromReservation(item))) ;
+                if (NumSlotsHelper.isReserveable(ReservationsHelper.ViewModelFromReservation(item)))
                 {
                     message = message + ". There is a possibility that a reservation on the waiting list may fill this spot";
                 }
